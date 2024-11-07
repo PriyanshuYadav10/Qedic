@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372599305623",
+    "project_id": "qedic-40929",
+    "storage_bucket": "qedic-40929.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372599305623:android:89d14a24d6e26743e480d2",
+        "android_client_info": {
+          "package_name": "com.one.qedic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372599305623-j0ufab42u1msrfjttska0j2ori8g8h33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGuPfIJ-nv3GrmU4dOx4Kb0iKssRf7Nj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372599305623-j0ufab42u1msrfjttska0j2ori8g8h33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
