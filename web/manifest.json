@@ -1,6 +1,6 @@
 {
-    "name": "qedic",
-    "short_name": "qedic",
+    "name": "qedicapp",
+    "short_name": "qedicapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

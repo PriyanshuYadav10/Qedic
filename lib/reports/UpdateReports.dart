@@ -533,11 +533,15 @@ class _UpdateReportsState extends State<UpdateReports> {
 
                                       ),
                                       Container(
+                                        alignment: Alignment.centerLeft,
+                                        width: MediaQuery.sizeOf(context).width*0.7,
                                         margin: EdgeInsets.only(left: 5),
                                         child: Text(
                                           Selected_data_Expenses[index].remark ??
                                               "",
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.left,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 14,
                                             height: 1,

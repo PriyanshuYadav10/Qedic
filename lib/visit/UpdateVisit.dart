@@ -2275,7 +2275,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
           http.MultipartRequest("POST", Uri.parse(Commons.updateVisit));
       //add text fields
       request.fields["user_id"] = "${loginModel.data!.id ?? ""}";
-      request.fields["visit_id"] = widget.visitListData.id ?? "";
+      request.fields["visit_id"] = widget.visitListData.id.toString() ?? "";
       request.fields["cust_name"] = cust_name_Controller.text;
       request.fields["city_name"] = city_nameController.text;
       request.fields["center_name"] = center_name_Controller.text;

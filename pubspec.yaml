@@ -1,5 +1,5 @@
 name: qedic
-description: A new Flutter project.
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: ^3.8.1
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,10 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -63,18 +62,18 @@ dev_dependencies:
   url_launcher:
   firebase_core:
   app_settings:
-#  flutter_local_notifications: ^14.0.0+2
+  #  flutter_local_notifications: ^14.0.0+2
 
-#  firebase_messaging: ^14.6.1
+  #  firebase_messaging: ^14.6.1
   firebase_messaging: ^14.7.1
   firebase_remote_config: ^4.2.1
 
-#  flutter_local_notifications: ^15.1.0+1
-  flutter_local_notifications: ^11.0.0
+  #  flutter_local_notifications: ^15.1.0+1
+  flutter_local_notifications:
   firebase_crashlytics: ^3.3.2
+  flutter_image_compress: ^2.4.0
   shared_preferences: ^2.0.15
   lottie: ^1.4.3
-  flutter_image_compress: ^1.1.2
   image_picker: ^0.8.4+4
 
 

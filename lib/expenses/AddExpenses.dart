@@ -252,7 +252,7 @@ class _AddExpensesState extends State<AddExpenses> {
                                 if (visit_name_selected ==
                                     "Select Visit (Optional)") {
                                   visit_name_selected = item.custName!;
-                                  visit_id_selected = item.id!;
+                                  visit_id_selected = item.id.toString();
                                 } else {
                                   visit_name_selected =
                                       "$visit_name_selected, ${item.custName!}";
@@ -1148,7 +1148,7 @@ class _AddExpensesState extends State<AddExpenses> {
   }
 
   ImageUload(
-      File imagefile, BuildContext _context, String type, int index) async {
+      XFile imagefile, BuildContext _context, String type, int index) async {
     _context.loaderOverlay.show();
 
     try {
@@ -1244,7 +1244,7 @@ class _AddExpensesState extends State<AddExpenses> {
           dir.absolute.path + "/11${tempImage.path.split("/").last}";
       // File file = createFile("${dir.absolute.path}/test.png");
       // file.writeAsBytesSync(data.buffer.asUint8List());
-      File? image = await Imagecompresh(tempImage, targetPath);
+      XFile? image = await Imagecompresh(tempImage, targetPath);
 
       ImageUload(image!, _context, type, index);
     } else {
@@ -1252,7 +1252,7 @@ class _AddExpensesState extends State<AddExpenses> {
     }
   }
 
-  Future<File?> Imagecompresh(File file, String targetPath) async {
+  Future<XFile?> Imagecompresh(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
@@ -1261,7 +1261,7 @@ class _AddExpensesState extends State<AddExpenses> {
     );
 
     print(file.lengthSync());
-    print(result?.lengthSync());
+    print(result?.length());
     return result;
   }
 

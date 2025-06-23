@@ -1,6 +1,6 @@
 class ReportListModel {
   int? status;
-  String? message;
+  var message;
   List<Data_report>? data;
 
   ReportListModel({this.status, this.message, this.data});
@@ -28,17 +28,17 @@ class ReportListModel {
 }
 
 class Data_report {
-  int? id;
-  String? userId;
-  String? title;
-  String? remark;
-  String? startDate;
+  var id;
+  var userId;
+  var title;
+  var remark;
+  var startDate;
   var total_amount;
-  String? endDate;
-  String? admin_comment;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
+  var endDate;
+  var admin_comment;
+  var status;
+  var createdAt;
+  var updatedAt;
   List<SubmitExpenses>? submitExpenses;
 
   Data_report(
@@ -97,11 +97,11 @@ class Data_report {
 
 class SubmitExpenses {
   int? id;
-  String? submissionExpensesId;
-  String? expensesId;
-  String? userId;
-  String? createdAt;
-  String? updatedAt;
+  var submissionExpensesId;
+  var expensesId;
+  var userId;
+  var createdAt;
+  var updatedAt;
   List<Expenses>? expenses;
 
   SubmitExpenses(
@@ -145,32 +145,32 @@ class SubmitExpenses {
 
 class Expenses {
   int? id;
-  String? userId;
-  String? visitId;
-  String? selectDate;
-  String? travelPurpose;
-  String? fromLocation;
-  String? toLocation;
-  String? mileageKm;
-  String? mileageAllowance;
-  String? hotelExp;
-  String? hotelExpReceipt;
-  String? vechileFare;
-  String? vechileReceipt;
-  String? otherExp;
-  String? otherExpReceipt;
-  String? remark;
-  String? routeType;
-  String? travelWithMd;
-  String? adminComment;
-  String? accountStatus;
-  String? adminStatus;
-  String? status;
-  String? date;
-  String? isEditable;
-  String? isDeleteable;
-  String? createdAt;
-  String? updatedAt;
+  var userId;
+  var visitId;
+  var selectDate;
+  var travelPurpose;
+  var fromLocation;
+  var toLocation;
+  var mileageKm;
+  var mileageAllowance;
+  var hotelExp;
+  var hotelExpReceipt;
+  var vechileFare;
+  var vechileReceipt;
+  var otherExp;
+  var otherExpReceipt;
+  var remark;
+  var routeType;
+  var travelWithMd;
+  var adminComment;
+  var accountStatus;
+  var adminStatus;
+  var status;
+  var date;
+  var isEditable;
+  var isDeleteable;
+  var createdAt;
+  var updatedAt;
 
   Expenses(
       {this.id,

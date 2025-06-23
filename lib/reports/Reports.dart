@@ -88,7 +88,7 @@ class _ExpensesState extends State<Reports> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {
-                    if (report_Data[index].status!.toUpperCase() == "0") {
+                    if (report_Data[index].status!.toString() == "0") {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -358,13 +358,13 @@ class _ExpensesState extends State<Reports> {
                                                         Radius.circular(5)),
                                                 color: report_Data[index]
                                                             .status!
-                                                            .toUpperCase() ==
+                                                            .toString() ==
                                                         "0"
                                                     ? HexColor(HexColor.yello1)
                                                         .withOpacity(0.5)
                                                     : report_Data[index]
                                                                 .status!
-                                                                .toUpperCase() ==
+                                                                .toString() ==
                                                             "1"
                                                         ? HexColor(HexColor
                                                                 .green_txt)
@@ -390,13 +390,13 @@ class _ExpensesState extends State<Reports> {
                                                   fontSize: 12,
                                                   color: report_Data[index]
                                                               .status!
-                                                              .toUpperCase() ==
+                                                              .toString() ==
                                                           "0"
                                                       ? HexColor(
                                                           HexColor.yello1)
                                                       : report_Data[index]
                                                                   .status!
-                                                                  .toUpperCase() ==
+                                                                  .toString()==
                                                               "1"
                                                           ? Colors.green
                                                           : Colors.red,
@@ -427,12 +427,16 @@ class _ExpensesState extends State<Reports> {
                                               ),
                                             ),
                                             Container(
+                                              alignment: Alignment.centerLeft,
+                                              width: MediaQuery.sizeOf(context).width*0.7,
                                               margin: EdgeInsets.only(left: 5),
                                               child: Text(
                                                 report_Data[index]
                                                         .admin_comment ??
                                                     "",
                                                 textAlign: TextAlign.center,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis ,
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   height: 1,

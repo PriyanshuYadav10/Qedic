@@ -1,6 +1,6 @@
 class VisitListModel {
   int? status;
-  String? message;
+  var message;
   List<VisitListData>? data;
 
   VisitListModel({this.status, this.message, this.data});
@@ -28,52 +28,52 @@ class VisitListModel {
 }
 
 class VisitListData {
-  String? id;
-  String? userId;
-  String? purpose;
-  String? custName;
-  String? centerName;
-  String? cityName;
-  String? contactNumber;
-  String? email;
-  String? existingMachine;
-  String? usgAgeing;
-  String? quality;
-  String? productName;
-  String? opptyType;
-  String? expectedClosureDate;
-  String? remarkSupport;
-  String? supportRequired;
-  String? winLossProduct;
-  String? winLossCompany;
+  var id;
+  var userId;
+  var purpose;
+  var custName;
+  var centerName;
+  var cityName;
+  var contactNumber;
+  var email;
+  var existingMachine;
+  var usgAgeing;
+  var quality;
+  var productName;
+  var opptyType;
+  var expectedClosureDate;
+  var remarkSupport;
+  var supportRequired;
+  var winLossProduct;
+  var winLossCompany;
   var adminComment;
-  String? accountantStatus;
-  String? status;
-  String? date;
-  String? address;
-  String? district;
-  String? existingMachineCompany;
-  String? machineModel;
-  String? isOpportunity;
-  String? opportunityId;
-  String? opportunityDate;
-  String? modality;
-  String? productValue;
-  String? productCategory;
-  String? pndt;
-  String? quatationSubmit;
-  String? demoDone;
-  String? winLossDate;
-  String? opportunityStatus;
-  String? reffrenceUserId;
-  String? comment;
-  String? forcast;
-  String? isEditable;
-  String? isDeleteable;
+  var accountantStatus;
+  var status;
+  var date;
+  var address;
+  var district;
+  var existingMachineCompany;
+  var machineModel;
+  var isOpportunity;
+  var opportunityId;
+  var opportunityDate;
+  var modality;
+  var productValue;
+  var productCategory;
+  var pndt;
+  var quatationSubmit;
+  var demoDone;
+  var winLossDate;
+  var opportunityStatus;
+  var reffrenceUserId;
+  var comment;
+  var forcast;
+  var isEditable;
+  var isDeleteable;
   bool isSelected = false;
-  String? createdAt;
-  String? updatedAt;
-  String? uname;
+  var createdAt;
+  var updatedAt;
+  var uname;
 
   VisitListData(
       {this.id,

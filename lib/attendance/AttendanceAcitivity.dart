@@ -359,9 +359,9 @@ class _AttendanceAcitivity extends State<AttendanceAcitivity> {
 
       // File file = createFile("${dir.absolute.path}/test.png");
       // file.writeAsBytesSync(data.buffer.asUint8List());
-      File? image = await testCompressAndGetFile(tempImage, targetPath);
+      XFile? image = await testCompressAndGetFile(tempImage, targetPath);
       setState(() {
-        imagepath1 = image;
+        imagepath1 = File(image!.path);
       });
 
       ImageUload(attendanceType, image!, _context);
@@ -372,7 +372,7 @@ class _AttendanceAcitivity extends State<AttendanceAcitivity> {
 
   ImageUload(
     String type,
-    File imagefile,
+    XFile imagefile,
     BuildContext _context,
   ) async {
     _context.loaderOverlay.show();
@@ -424,7 +424,7 @@ class _AttendanceAcitivity extends State<AttendanceAcitivity> {
     }
   }
 
-  Future<File?> testCompressAndGetFile(File file, String targetPath) async {
+  Future<XFile?> testCompressAndGetFile(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
@@ -434,7 +434,7 @@ class _AttendanceAcitivity extends State<AttendanceAcitivity> {
 
     if (kDebugMode) {
       print(file.lengthSync());
-      print(result?.lengthSync());
+      print(result?.length());
     }
 
     return result;

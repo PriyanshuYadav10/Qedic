@@ -593,7 +593,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     );
   }
 
-  ImageUload(File imagefile, BuildContext _context) async {
+  ImageUload(XFile imagefile, BuildContext _context) async {
     _context.loaderOverlay.show();
 
     try {
@@ -630,7 +630,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
         if (imageUploadModel.status == 1) {
           setState(() {
-            _imagefile = imagefile;
+            _imagefile = File(imagefile.path);
 
           });
           picture = imageUploadModel.data! ?? "";
@@ -659,7 +659,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
             dir.absolute.path + "/11${tempImage.path.split("/").last}";
         // File file = createFile("${dir.absolute.path}/test.png");
         // file.writeAsBytesSync(data.buffer.asUint8List());
-        File? image = await Imagecompresh(tempImage, targetPath);
+        XFile? image = await Imagecompresh(tempImage, targetPath);
 
         ImageUload(image!, _context);
       } else {
@@ -668,7 +668,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   }
 
-  Future<File?> Imagecompresh(File file, String targetPath) async {
+  Future<XFile?> Imagecompresh(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
@@ -677,7 +677,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     );
 
     print(file.lengthSync());
-    print(result?.lengthSync());
+    print(result?.length());
     return result;
   }
 

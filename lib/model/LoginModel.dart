@@ -27,7 +27,7 @@ class Data {
   String? firstName;
   String? lastName;
   String? username;
-  String? roleId;
+  var roleId;
   String? userType;
   String? email;
   String? fatherName;
@@ -45,7 +45,7 @@ class Data {
   String? aadhar;
   String? pancard;
   String? referenceBy;
-  String? newsletter;
+  var newsletter;
   String? shop;
   String? langCode;
   String? deviceType;

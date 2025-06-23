@@ -303,13 +303,13 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
                                 if (visit_name_selected ==
                                     "Select Visit (Optional)") {
                                   visit_name_selected = item.custName!;
-                                  visit_id_selected = item.id!;
+                                  visit_id_selected = item.id.toString();
                                 } else {
                                   visit_name_selected = visit_name_selected +
                                       ", " +
                                       item.custName!;
                                   visit_id_selected =
-                                      visit_id_selected + "," + item.id!;
+                                      visit_id_selected + "," + item.id.toString();
                                 }
                               }
 
@@ -1186,7 +1186,7 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
   }
 
   ImageUload(
-      File imagefile, BuildContext _context, String type, int index) async {
+      XFile imagefile, BuildContext _context, String type, int index) async {
     _context.loaderOverlay.show();
 
     try {
@@ -1276,13 +1276,13 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
     if (pickedFile != null) {
       print('sarjeet image .3');
 
-      final tempImage = File(pickedFile.path);
+      final tempImage = pickedFile;
       final dir = await path_provider.getTemporaryDirectory();
       final targetPath =
           dir.absolute.path + "/11${tempImage.path.split("/").last}";
       // File file = createFile("${dir.absolute.path}/test.png");
       // file.writeAsBytesSync(data.buffer.asUint8List());
-      File? image = await Imagecompresh(tempImage, targetPath);
+      XFile? image = await Imagecompresh(tempImage, targetPath);
 
       ImageUload(image!, _context, type, index);
     } else {
@@ -1290,16 +1290,16 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
     }
   }
 
-  Future<File?> Imagecompresh(File file, String targetPath) async {
+  Future<XFile?> Imagecompresh(XFile file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
+      file.path,
       targetPath,
       quality: 20,
       rotate: 0,
     );
 
-    print(file.lengthSync());
-    print(result?.lengthSync());
+    print(file.length());
+    print(result?.length());
     return result;
   }
 

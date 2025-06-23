@@ -1,6 +1,6 @@
 class ExpensesListModel {
   int? status;
-  String? message;
+  var message;
   List<Data_Expenses>? data;
 
   ExpensesListModel({this.status, this.message, this.data});
@@ -28,29 +28,29 @@ class ExpensesListModel {
 }
 
   class Data_Expenses {
-  String? id;
-  String? userId;
-  String? visitId;
-  String? visitName;
-  String? selectDate;
-  String? travelPurpose;
-  String? fromLocation;
-  String? toLocation;
-  String? mileageKm;
-  String? mileageAllowance;
-  String? hotelExpReceipt;
-  String? hotelExp;
-  String? vechileFare;
-  String? vechileReceipt;
-  String? otherExp;
-  String? otherExpReceipt;
-  String? accountStatus;
-  String? status;
-  String? isEditable;
-  String? adminComment;
-  String? travelWithMd;
-  String? routeType;
-  String? remark;
+  var id;
+  var userId;
+  var visitId;
+  var visitName;
+  var selectDate;
+  var travelPurpose;
+  var fromLocation;
+  var toLocation;
+  var mileageKm;
+  var mileageAllowance;
+  var hotelExpReceipt;
+  var hotelExp;
+  var vechileFare;
+  var vechileReceipt;
+  var otherExp;
+  var otherExpReceipt;
+  var accountStatus;
+  var status;
+  var isEditable;
+  var adminComment;
+  var travelWithMd;
+  var routeType;
+  var remark;
   bool isSelected = false;
   var total_amount;
 
