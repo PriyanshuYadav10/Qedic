@@ -1,6 +1,6 @@
 class AllListingModel {
   int? status;
-  String? message;
+  var message;
   AllListingData? data;
 
   AllListingModel({this.status, this.message, this.data});
@@ -62,42 +62,42 @@ class AllListingData {
 }
 
 class RefrenceUser {
-  String? id;
-  String? roleId;
-  String? type;
-  String? username;
-  String? firstName;
-  String? lastName;
-  String? email;
-  String? password;
-  String? fatherName;
-  String? motherName;
-  String? gender;
-  String? dob;
-  String? qualification;
-  String? percentage;
-  String? bloodGroup;
-  String? mobile;
-  String? designation;
-  String? dateOfJoining;
-  String? address;
-  String? salary;
-  String? aadhar;
-  String? aadharBack;
-  String? pancard;
-  String? referenceBy;
-  String? newsletter;
+  var id;
+  var roleId;
+  var type;
+  var username;
+  var firstName;
+  var lastName;
+  var email;
+  var password;
+  var fatherName;
+  var motherName;
+  var gender;
+  var dob;
+  var qualification;
+  var percentage;
+  var bloodGroup;
+  var mobile;
+  var designation;
+  var dateOfJoining;
+  var address;
+  var salary;
+  var aadhar;
+  var aadharBack;
+  var pancard;
+  var referenceBy;
+  var newsletter;
   var shop;
-  String? langCode;
+  var langCode;
   var picture;
-  String? deviceType;
-  String? fcmToken;
+  var deviceType;
+  var fcmToken;
   var rememberToken;
-  String? status;
-  String? otp;
-  String? deleteStatus;
-  String? createdAt;
-  String? updatedAt;
+  var status;
+  var otp;
+  var deleteStatus;
+  var createdAt;
+  var updatedAt;
 
   RefrenceUser(
       {this.id,
@@ -220,9 +220,9 @@ class RefrenceUser {
 
 class MachineComapny {
   int? id;
-  String? name;
-  String? status;
-  String? createdAt;
+  var name;
+  var status;
+  var createdAt;
   var updatedAt;
 
   MachineComapny(

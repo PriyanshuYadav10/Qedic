@@ -1,6 +1,6 @@
 class LoginModel {
   int? status;
-  String? message;
+  var message;
   Data? data;
 
   LoginModel({this.status, this.message, this.data});
@@ -24,32 +24,32 @@ class LoginModel {
 
 class Data {
   int? id;
-  String? firstName;
-  String? lastName;
-  String? username;
+  var firstName;
+  var lastName;
+  var username;
   var roleId;
-  String? userType;
-  String? email;
-  String? fatherName;
-  String? motherName;
-  String? gender;
-  String? dob;
-  String? qualification;
-  String? percentage;
-  String? bloodGroup;
-  String? mobile;
-  String? designation;
-  String? dateOfJoining;
-  String? address;
-  String? salary;
-  String? aadhar;
-  String? pancard;
-  String? referenceBy;
+  var userType;
+  var email;
+  var fatherName;
+  var motherName;
+  var gender;
+  var dob;
+  var qualification;
+  var percentage;
+  var bloodGroup;
+  var mobile;
+  var designation;
+  var dateOfJoining;
+  var address;
+  var salary;
+  var aadhar;
+  var pancard;
+  var referenceBy;
   var newsletter;
-  String? shop;
-  String? langCode;
-  String? deviceType;
-  String? picture;
+  var shop;
+  var langCode;
+  var deviceType;
+  var picture;
 
   Data(
       {this.id,

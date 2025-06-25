@@ -648,7 +648,7 @@ class _VisitListState extends State<VisitList> {
                                     setState(() {
                                       visitListData!.clear();
                                       visitOppt = false;
-                                      getVisitListAPI('visit');
+                                      getVisitListAPI('oppo');
                                     })
                                   });
                             }

@@ -499,6 +499,7 @@ class _ExpensesState extends State<Reports> {
       } else {
         // Request failed with an error status code
         print("sarjeet Request failed with status: ${response.statusCode}");
+        print("sarjeet Request failed with status: ${response.body}");
       }
     } catch (e) {
       // An error occurred during the request

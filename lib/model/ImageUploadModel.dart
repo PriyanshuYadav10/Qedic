@@ -1,7 +1,7 @@
 class ImageUploadModel {
   int? status;
-  String? message;
-  String? data;
+  var message;
+  var data;
 
   ImageUploadModel({this.status, this.message, this.data});
 

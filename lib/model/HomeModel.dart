@@ -1,6 +1,6 @@
 class HomeModel {
   int? status;
-  String? message;
+  var message;
   int? totalVisits;
   int? pendingVisits;
   int? approveVisits;

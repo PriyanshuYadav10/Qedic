@@ -1,6 +1,6 @@
 class LeaveListModel {
   int? status;
-  String? message;
+  var message;
   List<Data_leave>? data;
 
   LeaveListModel({this.status, this.message, this.data});
@@ -28,16 +28,16 @@ class LeaveListModel {
 }
 
 class Data_leave {
-  String? id;
-  String? userId;
-  String? userName;
-  String? leaveData;
-  String? startDate;
-  String? endDate;
-  String? leaveType;
-  String? description;
-  String? status;
-  String? adminComment;
+  var id;
+  var userId;
+  var userName;
+  var leaveData;
+  var startDate;
+  var endDate;
+  var leaveType;
+  var description;
+  var status;
+  var adminComment;
 
   Data_leave(
       {this.id,

@@ -1,6 +1,6 @@
 class SendOTPModel {
   int? status;
-  String? message;
+  var message;
   Data? data;
 
   SendOTPModel({this.status, this.message, this.data});
@@ -23,8 +23,8 @@ class SendOTPModel {
 }
 
 class Data {
-  String? email;
-  String? otp;
+  var email;
+  var otp;
 
   Data({this.email, this.otp});
 

@@ -1,7 +1,7 @@
 class ApiResponse<T> {
   Status status;
   T? data;
-  String? message;
+  var message;
 
   ApiResponse.initial(this.message) : status = Status.INITIAL;
 

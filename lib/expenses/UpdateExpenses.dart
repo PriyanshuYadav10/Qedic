@@ -1413,7 +1413,8 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
 
       // request.fields["user_id"] = "5";
 
-      print("sarjeet fields ${request.fields}");
+      print("sarjeet expenses fields ${request.fields}");
+      print("sarjeet expenses fields ${request.url}");
       //add headers
       var sendresponse = await request.send();
 

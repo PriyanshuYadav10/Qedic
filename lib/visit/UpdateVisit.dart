@@ -2177,19 +2177,19 @@ class _UpdateVisitState extends State<UpdateVisit> {
     DateTime? currentDate,
     DatePickerEntryMode initialEntryMode = DatePickerEntryMode.calendar,
     SelectableDayPredicate? selectableDayPredicate,
-    String? helpText,
-    String? cancelText,
-    String? confirmText,
+    var helpText,
+    var cancelText,
+    var confirmText,
     Locale? locale,
     bool useRootNavigator = true,
     RouteSettings? routeSettings,
     TextDirection? textDirection,
     TransitionBuilder? builder,
     DatePickerMode initialDatePickerMode = DatePickerMode.day,
-    String? errorFormatText,
-    String? errorInvalidText,
-    String? fieldHintText,
-    String? fieldLabelText,
+    var errorFormatText,
+    var errorInvalidText,
+    var fieldHintText,
+    var fieldLabelText,
     TextInputType? keyboardType,
     Offset? anchorPoint,
   }) async {
@@ -2365,8 +2365,10 @@ class _UpdateVisitState extends State<UpdateVisit> {
           setState(() {
             listing_Data = listingData.data ?? AllListingData();
             for (var company in listing_Data?.machineComapny??[]) {
+              print('machine ${company.id.toString()}');
+              print('machine ${widget.visitListData.existingMachineCompany.toString()}');
               if (company.id.toString() ==
-                  widget.visitListData.existingMachineCompany) {
+                  widget.visitListData.existingMachineCompany.toString()) {
                 existingMachineCompanyController.text = company.name.toString();
                 existingMachineCompanyId = company.id.toString();
                 productListing(existingMachineCompanyId);

@@ -1,6 +1,6 @@
 class HolidayModel {
   int? status;
-  String? message;
+  var message;
   List<Orders>? orders;
 
   HolidayModel({this.status, this.message, this.orders});
@@ -28,12 +28,12 @@ class HolidayModel {
 }
 
 class Orders {
-  String? id;
-  String? title;
-  String? type;
-  String? holidayFrom;
-  String? holidayTo;
-  String? description;
+  var id;
+  var title;
+  var type;
+  var holidayFrom;
+  var holidayTo;
+  var description;
 
   Orders(
       {this.id,

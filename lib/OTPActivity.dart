@@ -39,7 +39,7 @@ class _OTOActivity extends State<OTPActivity> {
 
   // This is the entered code
   // It will be displayed in a Text widget
-  String? _otp;
+  var _otp;
 
   @override
   Widget build(BuildContext context) {

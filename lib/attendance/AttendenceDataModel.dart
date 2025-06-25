@@ -1,6 +1,6 @@
 class AttendenceDataModel {
   int? status;
-  String? message;
+  var message;
   Data? data;
 
   AttendenceDataModel({this.status, this.message, this.data});
@@ -24,17 +24,17 @@ class AttendenceDataModel {
 
 class Data {
   int? id;
-  String? userId;
-  String? latitude;
-  String? longitude;
-  String? punchInDate;
-  String? punchInTime;
-  String? punchOutDate;
-  String? punchOutTime;
-  String? image;
-  String? punchType;
-  String? createdAt;
-  String? updatedAt;
+  var userId;
+  var latitude;
+  var longitude;
+  var punchInDate;
+  var punchInTime;
+  var punchOutDate;
+  var punchOutTime;
+  var image;
+  var punchType;
+  var createdAt;
+  var updatedAt;
 
   Data(
       {this.id,

@@ -1,6 +1,6 @@
 class SuccessModel {
   int? status;
-  String? message;
+  var message;
 
   SuccessModel({this.status, this.message});
 

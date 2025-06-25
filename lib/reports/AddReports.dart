@@ -302,7 +302,7 @@ class _AddReportsState extends State<AddReports> {
                               expenses_id_selected = "";
                               for (var item in data_Expenses!) {
                                 if (expenses_id_selected.isEmpty) {
-                                  expenses_id_selected = item.id!;
+                                  expenses_id_selected = item.id.toString();
                                 } else {
                                   expenses_id_selected =
                                       expenses_id_selected + "," + item.id!;
@@ -645,19 +645,19 @@ class _AddReportsState extends State<AddReports> {
     DateTime? currentDate,
     DatePickerEntryMode initialEntryMode = DatePickerEntryMode.calendar,
     SelectableDayPredicate? selectableDayPredicate,
-    String? helpText,
-    String? cancelText,
-    String? confirmText,
+    var helpText,
+    var cancelText,
+    var confirmText,
     Locale? locale,
     bool useRootNavigator = true,
     RouteSettings? routeSettings,
     TextDirection? textDirection,
     TransitionBuilder? builder,
     DatePickerMode initialDatePickerMode = DatePickerMode.day,
-    String? errorFormatText,
-    String? errorInvalidText,
-    String? fieldHintText,
-    String? fieldLabelText,
+    var errorFormatText,
+    var errorInvalidText,
+    var fieldHintText,
+    var fieldLabelText,
     TextInputType? keyboardType,
     Offset? anchorPoint,
   }) async {

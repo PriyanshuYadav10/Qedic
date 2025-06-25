@@ -26,7 +26,7 @@ packages:
     source: hosted
     version: "7.4.5"
   another_flushbar:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: another_flushbar
       sha256: "19bf9520230ec40b300aaf9dd2a8fefcb277b25ecd1c4838f530566965befc2a"
@@ -34,7 +34,7 @@ packages:
     source: hosted
     version: "1.12.30"
   app_settings:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: app_settings
       sha256: "3e46c561441e5820d3a25339bf8b51b9e45a5f686873851a20c257a530917795"
@@ -186,7 +186,7 @@ packages:
     source: hosted
     version: "2.0.4"
   circular_profile_avatar:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: circular_profile_avatar
       sha256: "2ba47732e1d54b557e3ff033ab8ae58946b17d4bc268f6e3e6e3f58a90ac93c7"
@@ -282,7 +282,7 @@ packages:
     source: hosted
     version: "0.4.1"
   dropdown_button2:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: dropdown_button2
       sha256: b0fe8d49a030315e9eef6c7ac84ca964250155a6224d491c1365061bc974a9e1
@@ -346,7 +346,7 @@ packages:
     source: hosted
     version: "0.9.3+4"
   firebase_core:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_core
       sha256: "26de145bb9688a90962faec6f838247377b0b0d32cc0abecd9a4e43525fc856c"
@@ -370,7 +370,7 @@ packages:
     source: hosted
     version: "2.23.0"
   firebase_crashlytics:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_crashlytics
       sha256: "9897c01efaa950d2f6da8317d12452749a74dc45f33b46390a14cfe28067f271"
@@ -386,7 +386,7 @@ packages:
     source: hosted
     version: "3.6.35"
   firebase_messaging:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_messaging
       sha256: "980259425fa5e2afc03e533f33723335731d21a56fd255611083bceebf4373a8"
@@ -410,7 +410,7 @@ packages:
     source: hosted
     version: "3.5.18"
   firebase_remote_config:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_remote_config
       sha256: "653bd94b68e2c4e89eca10db90576101f1024151f39f2d4e7c64ae6a90a5f9c5"
@@ -455,7 +455,7 @@ packages:
     source: hosted
     version: "3.3.1"
   flutter_image_compress:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_image_compress
       sha256: "51d23be39efc2185e72e290042a0da41aed70b14ef97db362a6b5368d0523b27"
@@ -503,7 +503,7 @@ packages:
     source: hosted
     version: "0.1.5"
   flutter_lints:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_lints
       sha256: "5398f14efa795ffb7a33e9b6a08798b26a180edac4ad7db3f231e40f82ce11e1"
@@ -511,7 +511,7 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_local_notifications:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_local_notifications
       sha256: edae0c34573233ab03f5ba1f07465e55c384743893042cb19e010b4ee8541c12
@@ -551,7 +551,7 @@ packages:
     source: hosted
     version: "2.0.28"
   flutter_svg:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_svg
       sha256: cd57f7969b4679317c17af6fd16ee233c1e60a82ed209d8a475c54fd6fd6f845
@@ -569,7 +569,7 @@ packages:
     source: sdk
     version: "0.0.0"
   fluttertoast:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: fluttertoast
       sha256: "25e51620424d92d3db3832464774a6143b5053f15e382d8ffbfd40b6e795dcf1"
@@ -585,7 +585,7 @@ packages:
     source: hosted
     version: "4.0.0"
   geocoding:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: geocoding
       sha256: "606be036287842d779d7ec4e2f6c9435fc29bbbd3c6da6589710f981d8852895"
@@ -617,7 +617,7 @@ packages:
     source: hosted
     version: "3.2.0"
   geolocator:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: geolocator
       sha256: ee2212a3df8292ec4c90b91183b8001d3f5a800823c974b570c5f9344ca320dc
@@ -673,7 +673,7 @@ packages:
     source: hosted
     version: "2.1.3"
   google_nav_bar:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: google_nav_bar
       sha256: bb12dd21514ee1b041ab3127673e2fd85e693337df308f7f2b75cd1e8e92eaf4
@@ -681,7 +681,7 @@ packages:
     source: hosted
     version: "5.0.7"
   google_translator:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: google_translator
       sha256: "8fc4a8fb803cb1dc6da1723b2a3f77f32bc83f7538d1ae2a20cbf8f2b5c81e73"
@@ -721,7 +721,7 @@ packages:
     source: hosted
     version: "4.1.2"
   image_picker:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: image_picker
       sha256: b6951e25b795d053a6ba03af5f710069c99349de9341af95155d52665cb4607c
@@ -857,7 +857,7 @@ packages:
     source: hosted
     version: "5.1.1"
   loader_overlay:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: loader_overlay
       sha256: "285c9ccab9a42a392ba948bd0b14376fd0ee9ddd7b63e3018bcd54460fd3e021"
@@ -873,7 +873,7 @@ packages:
     source: hosted
     version: "1.3.0"
   lottie:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: lottie
       sha256: "893da7a0022ec2fcaa616f34529a081f617e86cc501105b856e5a3184c58c7c2"
@@ -993,7 +993,7 @@ packages:
     source: hosted
     version: "2.3.0"
   permission_handler:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: permission_handler
       sha256: "2d070d8684b68efb580a5997eb62f675e8a885ef0be6e754fb9ef489c177470f"
@@ -1049,7 +1049,7 @@ packages:
     source: hosted
     version: "6.1.0"
   pie_chart:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: pie_chart
       sha256: "58e6a46999ac938bfa1c3e5be414d6e149f037647197dca03ba3614324c12c82"
@@ -1121,7 +1121,7 @@ packages:
     source: hosted
     version: "0.27.7"
   shared_preferences:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
@@ -1310,7 +1310,7 @@ packages:
     source: hosted
     version: "29.2.11"
   syncfusion_flutter_datepicker:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: syncfusion_flutter_datepicker
       sha256: "2f61b9c7a7da38c2741061f8485ae2100e4135750590bf5a90f1162a258ebc0e"
@@ -1358,7 +1358,7 @@ packages:
     source: hosted
     version: "1.0.2"
   translator:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: translator
       sha256: "8f5e56d0ffb8f493b23ad0e4f824c17e5f43d45997e33b7c7b689c7a33cf3b06"
@@ -1374,7 +1374,7 @@ packages:
     source: hosted
     version: "1.4.0"
   url_launcher:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: url_launcher
       sha256: "9d06212b1362abc2f0f0d78e6f09f726608c74e3b9462e8368bb03314aa8d603"

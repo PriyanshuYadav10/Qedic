@@ -1,6 +1,6 @@
 class NoticeBoardModel {
   int? status;
-  String? message;
+  var message;
   List<Orders_Noticeboard>? orders;
 
   NoticeBoardModel({this.status, this.message, this.orders});
@@ -28,10 +28,10 @@ class NoticeBoardModel {
 }
 
 class Orders_Noticeboard {
-  String? id;
-  String? title;
-  String? description;
-  String? createdAt;
+  var id;
+  var title;
+  var description;
+  var createdAt;
 
   Orders_Noticeboard({this.id, this.title, this.description, this.createdAt});
 

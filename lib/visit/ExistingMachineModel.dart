@@ -1,6 +1,6 @@
 class ExistingMachineModel {
   int? status;
-  String? message;
+  var message;
   List<ExistingMachineData>? data;
 
   ExistingMachineModel({this.status, this.message, this.data});
@@ -29,11 +29,11 @@ class ExistingMachineModel {
 
 class ExistingMachineData {
   int? id;
-  String? companyMachineId;
-  String? name;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
+  var companyMachineId;
+  var name;
+  var status;
+  var createdAt;
+  var updatedAt;
 
   ExistingMachineData(
       {this.id,
