@@ -551,7 +551,7 @@ class _ExpensesState extends State<ExpensesSelect> {
       request.fields["user_id"] = "${loginModel.data!.id ?? ""}";
       request.fields["start_date"] = widget.startdate ?? "";
       request.fields["end_date"] = widget.enddate ?? "";
-      request.fields["status"] = "1";
+      request.fields["status"] = "0";
       // request.fields["user_id"] = "5";
 
       print("sarjeet ${request.fields}");
@@ -579,6 +579,7 @@ class _ExpensesState extends State<ExpensesSelect> {
 
           setState(() {
             expenses_listoriginal = expensesListModel.data ?? <Data_Expenses>[];
+            print('expenses_listoriginal  ${expenses_listoriginal.length}');
             expenses_listTemp.addAll(expenses_listoriginal);
             var temp = widget.slected_id.split(",");
             for (int i = 0; i < temp.length; i++) {

@@ -1,4 +1,4 @@
-package com.one.qedic
+package com.app.qedic
 
 import io.flutter.embedding.android.FlutterActivity
 

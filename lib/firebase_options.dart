@@ -68,7 +68,7 @@ class DefaultFirebaseOptions {
     projectId: 'qedic-40929',
     storageBucket: 'qedic-40929.appspot.com',
     iosClientId: '372599305623-hn9vensuts1ot86pumm4up27bm1m9gp0.apps.googleusercontent.com',
-    iosBundleId: 'com.one.qedic',
+    iosBundleId: 'com.app.qedic',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -78,6 +78,6 @@ class DefaultFirebaseOptions {
     projectId: 'qedic-40929',
     storageBucket: 'qedic-40929.appspot.com',
     iosClientId: '372599305623-hn9vensuts1ot86pumm4up27bm1m9gp0.apps.googleusercontent.com',
-    iosBundleId: 'com.one.qedic',
+    iosBundleId: 'com.app.qedic',
   );
 }

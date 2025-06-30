@@ -38,6 +38,7 @@ class Commons {
   static String report = "${baseUrl}report/store";
   static String editreport = "${baseUrl}edit/report";
   static String getreport = "${baseUrl}get/reports";
+  static String deleteAccount = "${baseUrl}delete-account";
   static String attendance = "${baseUrl}attendance";
   static String getattendance = "${baseUrl}get/attendance";
   static String allListing = "${baseUrl}list-option";
@@ -358,71 +359,73 @@ class Commons {
     showModalBottomSheet(
       context: context,
         builder: (BuildContext context) {
-        return SizedBox(
-          height: sheetHeight + 50,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: HexColor(HexColor.black),
-                      fontFamily: 'montserrat_regular',
-                      decoration: TextDecoration.none,
+        return SafeArea(
+          child: SizedBox(
+            height: sheetHeight + 50,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: HexColor(HexColor.black),
+                        fontFamily: 'montserrat_regular',
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: data.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
-                          dataCtrl.text = data[index].toString();
-                          onDataSelected(data[index].toString());
-                          Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 2),
-                        // Remove fixed height and width properties
-                        decoration: BoxDecoration(
-                          color: HexColor(HexColor.white),
-                          borderRadius: BorderRadius.circular(0),
-                          boxShadow: const [
-                            BoxShadow(color: Colors.black26, blurRadius: 2.5)
-                          ],
-                        ),
-                        child: Padding(
+                Expanded(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () {
+                            dataCtrl.text = data[index].toString();
+                            onDataSelected(data[index].toString());
+                            Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
                           padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 4),
-                          child: Text(
-                            data[index].toString(),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: HexColor(HexColor.black),
-                              fontFamily: 'montserrat_regular',
-                              decoration: TextDecoration.none,
+                              horizontal: 10, vertical: 10),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          // Remove fixed height and width properties
+                          decoration: BoxDecoration(
+                            color: HexColor(HexColor.white),
+                            borderRadius: BorderRadius.circular(0),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 2.5)
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 4),
+                            child: Text(
+                              data[index].toString(),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: HexColor(HexColor.black),
+                                fontFamily: 'montserrat_regular',
+                                decoration: TextDecoration.none,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

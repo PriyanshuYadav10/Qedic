@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "372599305623",
-    "project_id": "qedic-40929",
-    "storage_bucket": "qedic-40929.appspot.com"
+    "project_number": "86346932967",
+    "project_id": "qedic-70ce5",
+    "storage_bucket": "qedic-70ce5.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:372599305623:android:89d14a24d6e26743e480d2",
+        "mobilesdk_app_id": "1:86346932967:android:25fd1045f97b2a81bc3842",
         "android_client_info": {
-          "package_name": "com.one.qedic"
+          "package_name": "com.app.qedic"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "372599305623-j0ufab42u1msrfjttska0j2ori8g8h33.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBGuPfIJ-nv3GrmU4dOx4Kb0iKssRf7Nj4"
+          "current_key": "AIzaSyAo-S0YKDCbderqqb-sS3mVhTR0rW2BSIY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "372599305623-j0ufab42u1msrfjttska0j2ori8g8h33.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

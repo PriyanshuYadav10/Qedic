@@ -293,7 +293,7 @@ class _AddReportsState extends State<AddReports> {
                                       enddate: _selectedEnddate,
                                   slected_id: expenses_id_selected,
                                     )),
-                          );
+                          ); 
                           if (result != null) {
                             List<Data_Expenses>? data_Expenses = result;
                             setState(() {
@@ -305,7 +305,7 @@ class _AddReportsState extends State<AddReports> {
                                   expenses_id_selected = item.id.toString();
                                 } else {
                                   expenses_id_selected =
-                                      expenses_id_selected + "," + item.id!;
+                                      expenses_id_selected + "," + item.id.toString();
                                 }
                               }
                               print("sarjeet $expenses_id_selected");

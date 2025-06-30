@@ -46,7 +46,7 @@ class _UpdateReportsState extends State<UpdateReports> {
       for(var item2 in expenses!){
 
         Data_Expenses data_expenses=Data_Expenses() ;
-        data_expenses!.id = "${item2.id}";
+        data_expenses.id = "${item2.id}";
         data_expenses.userId = item2.userId!;
         data_expenses.visitId = item2.visitId!;
         data_expenses.visitName = item2.visitId!;
@@ -79,7 +79,7 @@ class _UpdateReportsState extends State<UpdateReports> {
             expenses_id_selected = "${item2.id}";
           } else {
             expenses_id_selected =
-                expenses_id_selected + "," + "${item2.id}";
+                "$expenses_id_selected,${item2.id}";
           }
 
           Selected_data_Expenses.add(data_expenses);
@@ -365,12 +365,12 @@ class _UpdateReportsState extends State<UpdateReports> {
                                   Selected_data_Expenses.clear();
                                   Selected_data_Expenses.addAll(data_Expenses!);
                                   expenses_id_selected = "";
-                                  for (var item in data_Expenses!) {
+                                  for (var item in data_Expenses) {
                                     if (expenses_id_selected.isEmpty) {
-                                      expenses_id_selected = item.id!;
+                                      expenses_id_selected = item.id.toString();
                                     } else {
                                       expenses_id_selected =
-                                          expenses_id_selected + "," + item.id!;
+                                          "$expenses_id_selected,${item.id.toString()}";
                                     }
                                   }
                                   print("sarjeet $expenses_id_selected");

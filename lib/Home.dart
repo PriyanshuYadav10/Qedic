@@ -176,7 +176,7 @@ class _HomeState extends State<Home> {
                                     Expanded(
                                       flex: 1,
                                       child: Container(
-                                        height: 150,
+                                        height: 151,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 5),
                                         alignment: Alignment.center,
@@ -246,7 +246,7 @@ class _HomeState extends State<Home> {
                                     Expanded(
                                       flex: 1,
                                       child: Container(
-                                        height: 150,
+                                        height: 151,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 5),
                                         alignment: Alignment.center,
@@ -316,7 +316,7 @@ class _HomeState extends State<Home> {
                                     Expanded(
                                       flex: 1,
                                       child: Container(
-                                        height: 150,
+                                        height: 151,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 5),
                                         alignment: Alignment.center,

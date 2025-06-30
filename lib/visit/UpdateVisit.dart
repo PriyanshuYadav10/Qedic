@@ -156,7 +156,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
     remark_supportController.text = widget.visitListData.remarkSupport ?? '';
     support_requiredController.text =
         widget.visitListData.supportRequired ?? '';
-    isCheck = widget.visitListData.isOpportunity == '1' ? true : false;
+    isCheck = widget.visitListData.isOpportunity == 1 ? true : false;
     product_nameController.text = widget.visitListData.productName ?? '';
     qualityController.text = widget.visitListData.quality ?? '';
     valueController.text = widget.visitListData.productValue ?? '';
@@ -171,7 +171,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
         : widget.visitListData.winLossDate ?? '';
     statusCtrl.text = widget.visitListData.status ?? '';
     commentsController.text = widget.visitListData.comment ?? '';
-    foreCast = widget.visitListData.forcast == '1' ? true : false;
+    foreCast = widget.visitListData.forcast.toString() == '1' ? true : false;
     Win_Lost_CompanyController.text = widget.visitListData.winLossCompany ?? '';
     winLossCompanyId = widget.visitListData.winLossCompany ?? '';
     Win_Lost_ProductController.text = widget.visitListData.winLossProduct ?? '';
@@ -2377,7 +2377,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
             }
             for (var user in listing_Data?.refrenceUser??[]) {
               if (user.id.toString() ==
-                  widget.visitListData.reffrenceUserId) {
+                  widget.visitListData.reffrenceUserId.toString()) {
                 referenceController.text = user.firstName.toString();
                 referenceId = user.id.toString();
                 break;

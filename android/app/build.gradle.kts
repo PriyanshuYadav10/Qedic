@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.one.qedic"
+    namespace = "com.app.qedic"
     compileSdk = 35
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
-        applicationId = "com.one.qedic"
+        applicationId = "com.app.qedic"
         minSdk = 21
         targetSdk = 35
         versionCode = flutter.versionCode

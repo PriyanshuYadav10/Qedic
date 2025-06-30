@@ -31,7 +31,7 @@ class _VisitListState extends State<VisitList> {
         child: Scaffold(
       backgroundColor: HexColor(HexColor.white),
       appBar: Commons.Appbar_logo(false, context, ""),
-      body: visitListData!.isEmpty ? dataNotFound() : visitListUI(),
+      body: visitListUI(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           Navigator.push(
@@ -119,7 +119,7 @@ class _VisitListState extends State<VisitList> {
               )
             ],
           ),
-          Expanded(
+         visitListData!.isEmpty ? dataNotFound() :  Expanded(
             child: ListView.builder(
                 itemCount: visitListData.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -1063,15 +1063,17 @@ class _VisitListState extends State<VisitList> {
     context.loaderOverlay.show();
 
     try {
+      visitListData.clear();
       //create multipart request for POST or PATCH method
       var request = http.MultipartRequest("POST", Uri.parse(Commons.viewVisit));
       //add text fields
       request.fields["user_id"] = "${loginModel.data!.id ?? ""}";
-      request.fields["$visitOpptType"] = visitOpptType;
+      request.fields["visit"] = visitOpptType;
 
       print("sarjeet ${Commons.viewVisit}");
       print("sarjeet ${request.fields}");
       //add headers
+      
       var sendresponse = await request.send();
 
       //Get the response from the server
