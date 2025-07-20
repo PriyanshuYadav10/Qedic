@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:in_app_update/in_app_update.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:qedic/utility/Commons.dart';
 import 'package:qedic/utility/HexColor.dart';
@@ -41,6 +42,18 @@ class _LoginActivityState extends State<LoginActivity> {
   Key password_key = GlobalKey();
   Key checkbox_key = GlobalKey();
   Key login_button_key = GlobalKey();
+  void checkForUpdate() async {
+    try {
+      final updateInfo = await InAppUpdate.checkForUpdate();
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+          InAppUpdate.startFlexibleUpdate().then((_) {
+            InAppUpdate.completeFlexibleUpdate();
+          });
+      }
+    } catch (e) {
+      print("Update check failed: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -321,6 +334,7 @@ class _LoginActivityState extends State<LoginActivity> {
     // userid_Controller.text = "devtest@mailinator.com";
     // paswordController.text = "Vivek@123";
     getfcmtoken();
+    checkForUpdate();
     super.initState();
   }
 

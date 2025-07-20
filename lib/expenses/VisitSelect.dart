@@ -48,7 +48,7 @@ class _VisitSelectState extends State<VisitSelect> {
             item.supportRequired!.toLowerCase().contains(query.toLowerCase()) ||
             item.date!.toLowerCase().contains(query.toLowerCase()) ||
             item.status!.toLowerCase().contains(query.toLowerCase()) ||
-            item.isEditable!.toLowerCase().contains(query.toLowerCase())) {
+            item.isEditable==query.toLowerCase()) {
 
           dummyListData.add(item);
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:qedic/utility/HexColor.dart';
 
 import 'attendance/AttendanceAcitivity.dart';
@@ -26,7 +27,24 @@ class _HomeActivityState extends State<HomeActivity> {
     Expenses(),
     Menu(),
   ];
-
+  void checkForUpdate() async {
+    try {
+      final updateInfo = await InAppUpdate.checkForUpdate();
+      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+          InAppUpdate.startFlexibleUpdate().then((_) {
+            InAppUpdate.completeFlexibleUpdate();
+          });
+      }
+    } catch (e) {
+      print("Update check failed: $e");
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    checkForUpdate();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -39,66 +57,68 @@ class _HomeActivityState extends State<HomeActivity> {
         body: Container(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: HexColor(HexColor.white),
-            borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 10,
-                color: HexColor(HexColor.gray_text).withOpacity(1),
-              )
-            ],
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 7.0, vertical: 8),
-              child: GNav(
-                rippleColor: Colors.grey[300]!,
-                hoverColor: Colors.grey[100]!,
-                style: GnavStyle.oldSchool,
-                gap: 2,
-                haptic: true,
-                // haptic feedback
-                activeColor: HexColor(HexColor.white),
-                iconSize: 18,
-                textSize: 12,
-                tabBorderRadius: 10,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                duration: const Duration(milliseconds: 400),
-                tabBackgroundColor: HexColor(HexColor.primarycolor),
-                color: HexColor(HexColor.primarycolor),
-                tabs: [
-                  GButton(
-                    icon: Icons.home_outlined,
-                    text: "Home",
-                  ),
-                  GButton(
-                    icon: Icons.alarm_outlined,
-                    text:"Attendance",
-                  ),
-                  GButton(
-                    icon: Icons.location_history_outlined,
-                    text:"Visit",
-                  ),
-                  GButton(
-                    icon: Icons.monetization_on_outlined,
-                    text:"Expenses",
-                  ),
-                  GButton(
-                    icon: Icons.more_outlined,
-                    text: "More",
-
-                  ),
-                ],
-                selectedIndex: _selectedIndex,
-                onTabChange: (index) {
-                  setState(() {
-                    _selectedIndex = index;
-                  });
-                },
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              color: HexColor(HexColor.white),
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 10,
+                  color: HexColor(HexColor.gray_text).withOpacity(1),
+                )
+              ],
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 7.0, vertical: 8),
+                child: GNav(
+                  rippleColor: Colors.grey[300]!,
+                  hoverColor: Colors.grey[100]!,
+                  style: GnavStyle.oldSchool,
+                  gap: 2,
+                  haptic: true,
+                  // haptic feedback
+                  activeColor: HexColor(HexColor.white),
+                  iconSize: 18,
+                  textSize: 12,
+                  tabBorderRadius: 10,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                  duration: const Duration(milliseconds: 400),
+                  tabBackgroundColor: HexColor(HexColor.primarycolor),
+                  color: HexColor(HexColor.primarycolor),
+                  tabs: [
+                    GButton(
+                      icon: Icons.home_outlined,
+                      text: "Home",
+                    ),
+                    GButton(
+                      icon: Icons.alarm_outlined,
+                      text:"Attendance",
+                    ),
+                    GButton(
+                      icon: Icons.location_history_outlined,
+                      text:"Visit",
+                    ),
+                    GButton(
+                      icon: Icons.monetization_on_outlined,
+                      text:"Expenses",
+                    ),
+                    GButton(
+                      icon: Icons.more_outlined,
+                      text: "More",
+          
+                    ),
+                  ],
+                  selectedIndex: _selectedIndex,
+                  onTabChange: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                ),
               ),
             ),
           ),
