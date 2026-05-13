@@ -24,6 +24,9 @@ class LoginModel {
 
 class Data {
   int? id;
+  int? userId;
+  int? employeeId;
+  int? goalSettingUserId;
   var firstName;
   var lastName;
   var username;
@@ -51,37 +54,48 @@ class Data {
   var deviceType;
   var picture;
 
-  Data(
-      {this.id,
-        this.firstName,
-        this.lastName,
-        this.username,
-        this.roleId,
-        this.userType,
-        this.email,
-        this.fatherName,
-        this.motherName,
-        this.gender,
-        this.dob,
-        this.qualification,
-        this.percentage,
-        this.bloodGroup,
-        this.mobile,
-        this.designation,
-        this.dateOfJoining,
-        this.address,
-        this.salary,
-        this.aadhar,
-        this.pancard,
-        this.referenceBy,
-        this.newsletter,
-        this.shop,
-        this.langCode,
-        this.deviceType,
-        this.picture});
+  Data({
+    this.id,
+    this.userId,
+    this.employeeId,
+    this.goalSettingUserId,
+    this.firstName,
+    this.lastName,
+    this.username,
+    this.roleId,
+    this.userType,
+    this.email,
+    this.fatherName,
+    this.motherName,
+    this.gender,
+    this.dob,
+    this.qualification,
+    this.percentage,
+    this.bloodGroup,
+    this.mobile,
+    this.designation,
+    this.dateOfJoining,
+    this.address,
+    this.salary,
+    this.aadhar,
+    this.pancard,
+    this.referenceBy,
+    this.newsletter,
+    this.shop,
+    this.langCode,
+    this.deviceType,
+    this.picture,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = _toInt(json['id']);
+    userId = _toInt(json['user_id']);
+    employeeId = _toInt(json['employee_id']);
+    goalSettingUserId = _toInt(
+      json['goal_setting_user_id'] ??
+          json['goal_user_id'] ??
+          json['appraisal_user_id'],
+    );
     firstName = json['first_name'];
     lastName = json['last_name'];
     username = json['username'];
@@ -113,6 +127,9 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['employee_id'] = this.employeeId;
+    data['goal_setting_user_id'] = this.goalSettingUserId;
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
     data['username'] = this.username;
@@ -141,4 +158,13 @@ class Data {
     data['picture'] = this.picture;
     return data;
   }
+
+  int get goalModuleUserId =>
+      goalSettingUserId ?? userId ?? employeeId ?? id ?? 0;
+}
+
+int? _toInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  return int.tryParse('$value');
 }

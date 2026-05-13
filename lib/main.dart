@@ -30,6 +30,7 @@ Future<void> backgroundHandler(RemoteMessage message) async {
   // LocalNotificationService.createDisplayNotification(message);
 }
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:http/http.dart'as http;
+import 'package:http/http.dart' as http;
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:qedic/LoginActivity.dart';
 import 'package:qedic/apis/app_exception.dart';
@@ -11,6 +11,7 @@ import 'package:qedic/reports/AddReports.dart';
 import 'package:qedic/reports/Reports.dart';
 import 'package:qedic/utility/Commons.dart';
 import 'package:qedic/utility/HexColor.dart';
+import 'package:qedic/employee_goal/EmployeeGoal.dart';
 
 import 'ChangePasswordActivity.dart';
 import 'Leaves/AllLeaves.dart';
@@ -30,24 +31,30 @@ class _Menu extends State<Menu> {
     _updateProfile();
     super.initState();
   }
-  LoginModel? loginModel;
-  String picture="";
-  String namef="";
-  String namel="";
-  String email="";
-  String mobile="";
-  _updateProfile()  async {
-      loginModel = await Commons.getuser_info();
-    setState(()  {
-      picture=loginModel!.data!.picture??"";
-      namef=loginModel!.data!.firstName??"";
-      namel=loginModel!.data!.lastName??"";
-      email=loginModel!.data!.email??"";
-      mobile=loginModel!.data!.mobile??"";
-    });
 
+  LoginModel? loginModel;
+  String picture = "";
+  String namef = "";
+  String namel = "";
+  String email = "";
+  String mobile = "";
+  _updateProfile() async {
+    loginModel = await Commons.getuser_info();
+    setState(() {
+      picture = loginModel!.data!.picture ?? "";
+      namef = loginModel!.data!.firstName ?? "";
+      namel = loginModel!.data!.lastName ?? "";
+      email = loginModel!.data!.email ?? "";
+      mobile = loginModel!.data!.mobile ?? "";
+    });
   }
 
+  bool _isValidImageUrl(String value) {
+    final uri = Uri.tryParse(value.trim());
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,63 +65,65 @@ class _Menu extends State<Menu> {
       debugShowCheckedModeBanner: false,
       home: LoaderOverlay(
         child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(50.0),
-              child: AppBar(
-                title:Stack(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 10, bottom: 5),
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: 50,
-                            child:
-                            Container(
-                              child:  Image(
-                                  height: 80,
-                                  width: 80,
-                                  color: Colors.white,
-                                  image: AssetImage('images/q_logo.png')),
-                            ),
-
-                            // ,
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: 10),
-                            child: Container(
-                              child: Text("Menu",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: HexColor(HexColor.white),
-                                    fontFamily: 'montserrat_bold',
-                                    decoration: TextDecoration.none,
-                                  )),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50.0),
+            child: AppBar(
+              title: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 10, bottom: 5),
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 50,
+                          child: Container(
+                            child: Image(
+                              height: 80,
+                              width: 80,
+                              color: Colors.white,
+                              image: AssetImage('images/q_logo.png'),
                             ),
                           ),
 
-                        ],
-                      ),
+                          // ,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(top: 10),
+                          child: Container(
+                            child: Text(
+                              "Menu",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: HexColor(HexColor.white),
+                                fontFamily: 'montserrat_bold',
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                centerTitle: true,
-                backgroundColor: HexColor(HexColor.primary_s),
-                elevation: 0,
-                automaticallyImplyLeading: false,
-                systemOverlayStyle: SystemUiOverlayStyle(
-                  // Status bar color
-                  statusBarColor: HexColor(HexColor.primary_s),
-                  // Status bar brightness (optional)
-                  statusBarIconBrightness: Brightness.light,
-                  // For Android (dark icons)
-                  statusBarBrightness: Brightness.light, // For iOS (dark icons)
-                ),
+                  ),
+                ],
+              ),
+              centerTitle: true,
+              backgroundColor: HexColor(HexColor.primary_s),
+              elevation: 0,
+              automaticallyImplyLeading: false,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                // Status bar color
+                statusBarColor: HexColor(HexColor.primary_s),
+                // Status bar brightness (optional)
+                statusBarIconBrightness: Brightness.light,
+                // For Android (dark icons)
+                statusBarBrightness: Brightness.light, // For iOS (dark icons)
               ),
             ),
-            body: ListView(children: [
+          ),
+          body: ListView(
+            children: [
               Stack(
                 children: [
                   Container(
@@ -135,10 +144,14 @@ class _Menu extends State<Menu> {
                         Container(
                           alignment: Alignment.topCenter,
                           margin: EdgeInsets.only(top: 15, left: 20),
-                          child:  CircleAvatar(
+                          child: CircleAvatar(
                             radius: 40,
-                            backgroundImage: NetworkImage(
-                                picture),
+                            backgroundImage: _isValidImageUrl(picture)
+                                ? NetworkImage(picture)
+                                : null,
+                            child: _isValidImageUrl(picture)
+                                ? null
+                                : Icon(Icons.person, size: 40),
                           ),
                         ),
 
@@ -147,52 +160,51 @@ class _Menu extends State<Menu> {
                           children: [
                             Container(
                               alignment: Alignment.topCenter,
-                              margin: EdgeInsets.only(
-                                top: 15,
-                                left: 10,
+                              margin: EdgeInsets.only(top: 15, left: 10),
+                              child: Text(
+                                "${namef} ${namel}",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: HexColor(HexColor.white),
+                                  fontFamily: 'montserrat_medium',
+                                  decoration: TextDecoration.none,
+                                ),
                               ),
-                              child: Text("${namef} ${namel}",
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: HexColor(HexColor.white),
-                                    fontFamily: 'montserrat_medium',
-                                    decoration: TextDecoration.none,
-                                  )),
                             ),
                             Container(
-                              margin: EdgeInsets.only(
-                                left: 10,
-                              ),
+                              margin: EdgeInsets.only(left: 10),
                               alignment: Alignment.topCenter,
-                              child: Text(email,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor(HexColor.white),
-                                    fontFamily: 'montserrat_regular',
-                                    decoration: TextDecoration.none,
-                                  )),
+                              child: Text(
+                                email,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: HexColor(HexColor.white),
+                                  fontFamily: 'montserrat_regular',
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(
-                                left: 10,
-                              ),
+                              margin: EdgeInsets.only(left: 10),
                               alignment: Alignment.topCenter,
-                              child: Text(mobile,
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor(HexColor.white),
-                                    fontFamily: 'montserrat_regular',
-                                    decoration: TextDecoration.none,
-                                  )),
+                              child: Text(
+                                mobile,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: HexColor(HexColor.white),
+                                  fontFamily: 'montserrat_regular',
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
               Container(
@@ -206,11 +218,14 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
                           return UpdateProfile();
-                        })).then((value) => _updateProfile());
-
+                        },
+                      ),
+                    ).then((value) => _updateProfile());
                   },
                   child: Row(
                     children: [
@@ -221,8 +236,9 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: SvgPicture.asset(
@@ -260,10 +276,14 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                          return ChangePasswordActivity();
-                        }));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return EmployeeGoal();
+                        },
+                      ),
+                    );
                   },
                   child: Row(
                     children: [
@@ -274,8 +294,67 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                          const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          color: HexColor(HexColor.primary_s).withOpacity(0.4),
+                        ),
+                        child: SvgPicture.asset(
+                          "images/target.svg",
+                          height: 24,
+                          width: 24,
+                          fit: BoxFit.fill,
+                          color: HexColor(HexColor.primary_s),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 15),
+                        child: Text(
+                          "Employee Goal",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: HexColor(HexColor.primary_s),
+                            fontFamily: 'lato_bold',
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  color: HexColor(HexColor.primary_s).withOpacity(0.2),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangePasswordActivity();
+                        },
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 40,
+                        width: 40,
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: SvgPicture.asset(
@@ -313,12 +392,15 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
                           return NotificationActivity();
-                        })).then((value) {
-                      setState(() {
-                      });
+                        },
+                      ),
+                    ).then((value) {
+                      setState(() {});
                     });
                   },
                   child: Row(
@@ -330,8 +412,9 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: SvgPicture.asset(
@@ -369,10 +452,14 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return Reports();
-                    })).then((value) {});
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return Reports();
+                        },
+                      ),
+                    ).then((value) {});
                   },
                   child: Row(
                     children: [
@@ -383,8 +470,9 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: SvgPicture.asset(
@@ -422,13 +510,15 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
                           return HolidayCalendar();
-                        })).then((value) {
-                      setState(() {
-
-                      });
+                        },
+                      ),
+                    ).then((value) {
+                      setState(() {});
                     });
                   },
                   child: Row(
@@ -440,11 +530,12 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
-                        child:  SvgPicture.asset(
+                        child: SvgPicture.asset(
                           "images/ic_holidays.svg",
                           height: 24,
                           width: 24,
@@ -479,12 +570,15 @@ class _Menu extends State<Menu> {
                 ),
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
                           return AllLeaves();
-                        })).then((value) {
-                      setState(() {
-                      });
+                        },
+                      ),
+                    ).then((value) {
+                      setState(() {});
                     });
                   },
                   child: Row(
@@ -496,8 +590,9 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: SvgPicture.asset(
@@ -543,128 +638,175 @@ class _Menu extends State<Menu> {
                       context: context,
                       pageBuilder: (context, anim1, anim2) {
                         return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7)),
-                            child: Container(
-                              height: 320,
-                              width: MediaQuery.of(context).size.width,
-                              margin:
-                                  EdgeInsets.only(bottom: 0, left: 0, right: 0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: SizedBox.expand(
-                                  child: Column(children: <Widget>[
-                                Container(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Container(
+                            height: 320,
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.only(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: SizedBox.expand(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
                                     decoration: BoxDecoration(
                                       color: HexColor(HexColor.primary_s),
                                       borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(7),
-                                          topLeft: Radius.circular(7)),
+                                        topRight: Radius.circular(7),
+                                        topLeft: Radius.circular(7),
+                                      ),
                                     ),
                                     width: MediaQuery.of(context).size.width,
                                     padding: EdgeInsets.all(10.0),
-                                    child: Text("Confirmation",
+                                    child: Text(
+                                      "Confirmation",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontFamily: 'montserrat_medium',
+                                        decoration: TextDecoration.none,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      top: 20.0,
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    child: Image(
+                                      height: 100,
+                                      width: 200,
+                                      alignment: Alignment.center,
+                                      color: HexColor(HexColor.primary_s),
+
+                                      image: AssetImage('images/q_logo.png'),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                      top: 10.0,
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Are you sure want to logout?",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontFamily: 'montserrat_medium',
+                                          fontSize: 14,
+                                          color: HexColor(
+                                            HexColor.primarycolor,
+                                          ),
+                                          fontFamily: 'montserrat_regular',
                                           decoration: TextDecoration.none,
-                                        ))),
-                                Container(
-                                  margin:  EdgeInsets.only(
-                                      top: 20.0, left: 20, right: 20),
-                                  child:  Image(
-                                    height: 100,
-                                    width: 200,
-                                    alignment: Alignment.center,
-                                    color: HexColor(HexColor.primary_s),
-
-                                    image: AssetImage(
-
-                                      'images/q_logo.png',
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 10.0, left: 20, right: 20),
-                                    child: Center(
-                                      child: Text("Are you sure want to logout?",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color:
-                                                HexColor(HexColor.primarycolor),
-                                            fontFamily: 'montserrat_regular',
-                                            decoration: TextDecoration.none,
-                                          )),
-                                    )),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 50),
-                                  child: ListTile(
-                                    title: Row(
-                                      children: <Widget>[
-                                        Expanded(
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 50),
+                                    child: ListTile(
+                                      title: Row(
+                                        children: <Widget>[
+                                          Expanded(
                                             child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: HexColor(HexColor.white), backgroundColor: HexColor(
-                                                        HexColor.primary_s),
-                                                    shadowColor:
-                                                        HexColor(HexColor.gray),
-                                                    elevation: 3,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                32.0)),
-                                                    minimumSize: Size(
-                                                        100, 40), //////// HERE
+                                              margin: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: HexColor(
+                                                    HexColor.white,
                                                   ),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    LogoutAPI();
-                                                  },
-                                                  child: Text("Yes"),
-                                                ))),
-                                        Expanded(
+                                                  backgroundColor: HexColor(
+                                                    HexColor.primary_s,
+                                                  ),
+                                                  shadowColor: HexColor(
+                                                    HexColor.gray,
+                                                  ),
+                                                  elevation: 3,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          32.0,
+                                                        ),
+                                                  ),
+                                                  minimumSize: Size(
+                                                    100,
+                                                    40,
+                                                  ), //////// HERE
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  LogoutAPI();
+                                                },
+                                                child: Text("Yes"),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
                                             child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: HexColor(HexColor.white), backgroundColor: HexColor(
-                                                        HexColor.primary_s),
-                                                    shadowColor:
-                                                        HexColor(HexColor.gray),
-                                                    elevation: 3,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                32.0)),
-                                                    minimumSize: Size(
-                                                        100, 40), //////// HERE
+                                              margin: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: HexColor(
+                                                    HexColor.white,
                                                   ),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("No"),
-                                                ))),
-                                      ],
+                                                  backgroundColor: HexColor(
+                                                    HexColor.primary_s,
+                                                  ),
+                                                  shadowColor: HexColor(
+                                                    HexColor.gray,
+                                                  ),
+                                                  elevation: 3,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          32.0,
+                                                        ),
+                                                  ),
+                                                  minimumSize: Size(
+                                                    100,
+                                                    40,
+                                                  ), //////// HERE
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("No"),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                )
-                              ])),
-                            ));
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                       transitionBuilder: (context, anim1, anim2, child) {
                         return SlideTransition(
-                          position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
-                              .animate(anim1),
+                          position: Tween(
+                            begin: Offset(0, 1),
+                            end: Offset(0, 0),
+                          ).animate(anim1),
                           child: child,
                         );
                       },
@@ -679,12 +821,13 @@ class _Menu extends State<Menu> {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(10),
+                          ),
                           color: HexColor(HexColor.primary_s).withOpacity(0.4),
                         ),
                         child: ImageIcon(
-                           AssetImage("images/logout.png"),
+                          AssetImage("images/logout.png"),
                           color: HexColor(HexColor.primary_s),
                         ),
                       ),
@@ -704,17 +847,23 @@ class _Menu extends State<Menu> {
                   ),
                 ),
               ),
-              Container( width: double.infinity,
-                margin: EdgeInsets.only(left: 20, right: 20,top: 10, bottom: 20),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 10,
+                  bottom: 20,
+                ),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   color: HexColor(HexColor.primary_s).withOpacity(0.2),
                 ),
-      child: InkWell(
-        onTap: () {
-          showGeneralDialog(
+                child: InkWell(
+                  onTap: () {
+                    showGeneralDialog(
                       barrierLabel: "Label",
                       barrierDismissible: true,
                       barrierColor: Colors.black.withOpacity(0.5),
@@ -722,183 +871,244 @@ class _Menu extends State<Menu> {
                       context: context,
                       pageBuilder: (context, anim1, anim2) {
                         return Dialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7)),
-                            child: Container(
-                              height: 340,
-                              width: MediaQuery.of(context).size.width,
-                              margin:
-                                  EdgeInsets.only(bottom: 0, left: 0, right: 0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              child: SizedBox.expand(
-                                  child: Column(children: <Widget>[
-                                Container(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Container(
+                            height: 340,
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.only(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: SizedBox.expand(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
                                     decoration: BoxDecoration(
                                       color: HexColor(HexColor.primary_s),
                                       borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(7),
-                                          topLeft: Radius.circular(7)),
+                                        topRight: Radius.circular(7),
+                                        topLeft: Radius.circular(7),
+                                      ),
                                     ),
                                     width: MediaQuery.of(context).size.width,
                                     padding: EdgeInsets.all(10.0),
-                                    child: Text("Confirmation",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontFamily: 'montserrat_medium',
-                                          decoration: TextDecoration.none,
-                                        ))),
-                                Container(
-                                  margin:  EdgeInsets.only(
-                                      top: 20.0, left: 20, right: 20),
-                                  child:  Image(
-                                    height: 80,
-                                    width: 200,
-                                    alignment: Alignment.center,
-                                    color: HexColor(HexColor.primary_s),
-
-                                    image: AssetImage(
-                                      'images/q_logo.png',
+                                    child: Text(
+                                      "Confirmation",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontFamily: 'montserrat_medium',
+                                        decoration: TextDecoration.none,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Container(
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      top: 20.0,
+                                      left: 20,
+                                      right: 20,
+                                    ),
+                                    child: Image(
+                                      height: 80,
+                                      width: 200,
+                                      alignment: Alignment.center,
+                                      color: HexColor(HexColor.primary_s),
+
+                                      image: AssetImage('images/q_logo.png'),
+                                    ),
+                                  ),
+                                  Container(
                                     margin: const EdgeInsets.only(
-                                        top: 10.0, left: 20, right: 20),
+                                      top: 10.0,
+                                      left: 20,
+                                      right: 20,
+                                    ),
                                     child: Center(
                                       child: Column(
                                         children: [
-                                          Text("Are you sure want to Delete Account?",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color:
-                                                    HexColor(HexColor.primarycolor),
-                                                fontFamily: 'montserrat_regular',
-                                                decoration: TextDecoration.none,
-                                              )),
-                                          Text('If you delete your account, all your data will be permanently erased and cannot be recovered.',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color:
-                                                    HexColor(HexColor.primarycolor),
-                                                fontFamily: 'montserrat_regular',
-                                                decoration: TextDecoration.none,
-                                              )),
+                                          Text(
+                                            "Are you sure want to Delete Account?",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: HexColor(
+                                                HexColor.primarycolor,
+                                              ),
+                                              fontFamily: 'montserrat_regular',
+                                              decoration: TextDecoration.none,
+                                            ),
+                                          ),
+                                          Text(
+                                            'If you delete your account, all your data will be permanently erased and cannot be recovered.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: HexColor(
+                                                HexColor.primarycolor,
+                                              ),
+                                              fontFamily: 'montserrat_regular',
+                                              decoration: TextDecoration.none,
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                    )),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 20),
-                                  child: ListTile(
-                                    title: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                            child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: HexColor(HexColor.white), backgroundColor: HexColor(
-                                                        HexColor.primary_s),
-                                                    shadowColor:
-                                                        HexColor(HexColor.gray),
-                                                    elevation: 3,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                32.0)),
-                                                    minimumSize: Size(
-                                                        100, 40), //////// HERE
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    LogoutAPI();
-                                                  },
-                                                  child: Text("Yes"),
-                                                ))),
-                                        Expanded(
-                                            child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: HexColor(HexColor.white), backgroundColor: HexColor(
-                                                        HexColor.primary_s),
-                                                    shadowColor:
-                                                        HexColor(HexColor.gray),
-                                                    elevation: 3,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                32.0)),
-                                                    minimumSize: Size(
-                                                        100, 40), //////// HERE
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("No"),
-                                                ))),
-                                      ],
                                     ),
                                   ),
-                                )
-                              ])),
-                            ));
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 20),
+                                    child: ListTile(
+                                      title: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: HexColor(
+                                                    HexColor.white,
+                                                  ),
+                                                  backgroundColor: HexColor(
+                                                    HexColor.primary_s,
+                                                  ),
+                                                  shadowColor: HexColor(
+                                                    HexColor.gray,
+                                                  ),
+                                                  elevation: 3,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          32.0,
+                                                        ),
+                                                  ),
+                                                  minimumSize: Size(
+                                                    100,
+                                                    40,
+                                                  ), //////// HERE
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  LogoutAPI();
+                                                },
+                                                child: Text("Yes"),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                              ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  foregroundColor: HexColor(
+                                                    HexColor.white,
+                                                  ),
+                                                  backgroundColor: HexColor(
+                                                    HexColor.primary_s,
+                                                  ),
+                                                  shadowColor: HexColor(
+                                                    HexColor.gray,
+                                                  ),
+                                                  elevation: 3,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          32.0,
+                                                        ),
+                                                  ),
+                                                  minimumSize: Size(
+                                                    100,
+                                                    40,
+                                                  ), //////// HERE
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text("No"),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
                       },
                       transitionBuilder: (context, anim1, anim2, child) {
                         return SlideTransition(
-                          position: Tween(begin: Offset(0, 1), end: Offset(0, 0))
-                              .animate(anim1),
+                          position: Tween(
+                            begin: Offset(0, 1),
+                            end: Offset(0, 0),
+                          ).animate(anim1),
                           child: child,
                         );
                       },
                     );
                   },
-        child: Row(
-          children: [
-            Container(
-              height: 40,
-              width: 40,
-              margin: EdgeInsets.symmetric(horizontal: 5),
-              padding: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color:  HexColor(HexColor.primary_s).withOpacity(0.4)),
-              child: Icon(Icons.delete_forever, color:  HexColor(HexColor.primary_s)),
-            ),
-            SizedBox(width: 15),
-            Text(
-              "Delete Account",
-              style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.red,
-                  fontFamily: 'lato_bold'),
-            ),
-          ],
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 40,
+                        width: 40,
+                        margin: EdgeInsets.symmetric(horizontal: 5),
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: HexColor(HexColor.primary_s).withOpacity(0.4),
+                        ),
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: HexColor(HexColor.primary_s),
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        "Delete Account",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.red,
+                          fontFamily: 'lato_bold',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    ), 
-            ])),
       ),
     );
   }
 
   LogoutAPI() async {
-
     Commons.saveuser_info("");
     Commons.saveloginstatus(false);
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return LoginActivity();
-    }));
-
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return LoginActivity();
+        },
+      ),
+    );
 
     // context.loaderOverlay.show();
     //
@@ -940,30 +1150,27 @@ class _Menu extends State<Menu> {
     //   Commons.flushbar_Messege(context, "No Internet Connection");
     //   throw FetchDataException('No Internet Connection');
     // }
-
-
   }
 
-
   deleteAPI() async {
-
-
     context.loaderOverlay.show();
-    
+
     try {
       //create multipart request for POST or PATCH method
-      var request = http.MultipartRequest("POST", Uri.parse(Commons.deleteAccount));
+      var request = http.MultipartRequest(
+        "POST",
+        Uri.parse(Commons.deleteAccount),
+      );
       //add text fields
-     
-      request.fields["user_id"] = "${loginModel?.data!.id ??""}";
-    
-    
+
+      request.fields["user_id"] = "${loginModel?.data!.id ?? ""}";
+
       var sendresponse = await request.send();
-    
+
       //Get the response from the server
       var responseData = await sendresponse.stream.toBytes();
       var response = String.fromCharCodes(responseData);
-    
+
       context.loaderOverlay.hide();
       print('sarjeet log  ${response}');
       if (response == null ||
@@ -972,30 +1179,22 @@ class _Menu extends State<Menu> {
           response.contains("</html")) {
         Commons.flushbar_Messege(context, "internal server Error ");
       } else {
-    
-       
-    Commons.saveuser_info("");
-    Commons.saveloginstatus(false);
+        Commons.saveuser_info("");
+        Commons.saveloginstatus(false);
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-      return LoginActivity();
-    }));
-
-    
-    
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return LoginActivity();
+            },
+          ),
+        );
       }
     } on SocketException {
       context.loaderOverlay.hide();
       Commons.flushbar_Messege(context, "No Internet Connection");
       throw FetchDataException('No Internet Connection');
     }
-
-
   }
-
 }
-
-
-
-
-

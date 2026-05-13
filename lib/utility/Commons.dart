@@ -15,7 +15,7 @@ class Commons {
   // static String baseUrl = "";
 
   /*live*/
-  static String baseUrl = "https://qedichealthcare.com/api/";
+  static String baseUrl = "https://update.qedichealthcare.com/api/";
 
   static String loginapi = "${baseUrl}login";
   static String holidayList = "${baseUrl}holidayList";
@@ -43,32 +43,47 @@ class Commons {
   static String getattendance = "${baseUrl}get/attendance";
   static String allListing = "${baseUrl}list-option";
   static String productsListing = "${baseUrl}products";
+  static String goalMasterData = "${baseUrl}goal-setting/master-data";
+  static String goalSave = "${baseUrl}goal-setting/goals/save";
+  static String goalEdit = "${baseUrl}goal-setting/goals/edit";
+  static String goalSubmit = "${baseUrl}goal-setting/goals/submit";
+  static String goalList = "${baseUrl}goal-setting/goals/list";
+  static String goalLogs = "${baseUrl}goal-setting/logs";
+  static String goalMidyearSave = "${baseUrl}goal-setting/midyear/save";
+  static String goalMidyearSubmit = "${baseUrl}goal-setting/midyear/submit";
+  static String goalMidyearSkip = "${baseUrl}goal-setting/midyear/skip";
+  static String goalEndyearSave = "${baseUrl}goal-setting/endyear/save";
+  static String goalEndyearSubmit = "${baseUrl}goal-setting/endyear/submit";
+  static String goalOverallSave = "${baseUrl}goal-setting/overall/save";
+  static String goalOverallSubmit = "${baseUrl}goal-setting/overall/submit";
+  static String goalDevelopmentSaveSubmit =
+      "${baseUrl}goal-setting/development/save-submit";
+  static String goalEmployeeSignoff = "${baseUrl}goal-setting/signoff/employee";
 
   static flushbar_Messege(BuildContext context, String text) {
     Flushbar(
       backgroundColor: HexColor(HexColor.red_color),
       positionOffset: 20,
       reverseAnimationCurve: Curves.easeInOut,
-      icon: Icon(
-        Icons.error,
-        size: 28,
-        color: HexColor(HexColor.white),
-      ),
+      icon: Icon(Icons.error, size: 28, color: HexColor(HexColor.white)),
       message: text,
       duration: Duration(seconds: 3),
       flushbarPosition: FlushbarPosition.TOP,
     ).show(context);
   }
+
   static Fluttertoast_Messege(BuildContext context, String text_message) {
     Fluttertoast.showToast(
-        msg: text_message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
+      msg: text_message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
+
   static Future<int> getmileageFair() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt('mileageFair') ?? 0;
@@ -91,10 +106,11 @@ class Commons {
 
   static Future<LoginModel> getuser_info() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(" sarjeet ${jsonDecode(prefs.getString('userinfo')??"")}");
+    print(" sarjeet ${jsonDecode(prefs.getString('userinfo') ?? "")}");
 
-    LoginModel loginModel =
-        LoginModel.fromJson(jsonDecode(prefs.getString('userinfo') ?? ''));
+    LoginModel loginModel = LoginModel.fromJson(
+      jsonDecode(prefs.getString('userinfo') ?? ''),
+    );
     return loginModel;
   }
 
@@ -117,6 +133,7 @@ class Commons {
     }
     return datet;
   }
+
   static String Date_format(String date) {
     var inputFormat = DateFormat('yyyy-MM-dd');
     String datet = "";
@@ -131,6 +148,7 @@ class Commons {
     }
     return datet;
   }
+
   static String Date_format5(String date) {
     String datet = "";
     String day = "";
@@ -144,6 +162,7 @@ class Commons {
     }
     return datet;
   }
+
   static String Date_format3(String date) {
     String datet = "";
     String day = "";
@@ -161,6 +180,7 @@ class Commons {
     }
     return datet;
   }
+
   // 10:41 AM
   static String time_format(String time) {
     String timeUpdate = "";
@@ -176,7 +196,10 @@ class Commons {
   }
 
   static PreferredSize Appbar_logo(
-      bool backbutton, BuildContext context, String file_name) {
+    bool backbutton,
+    BuildContext context,
+    String file_name,
+  ) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(60.0),
       child: AppBar(
@@ -192,33 +215,34 @@ class Commons {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   if (!backbutton)
-                  Container(
-                    height: 50,
-                    child:
                     Container(
-                      child:  Image(
+                      height: 50,
+                      child: Container(
+                        child: Image(
                           height: 80,
                           width: 80,
                           color: Colors.white,
-                          image: AssetImage('images/q_logo.png')),
+                          image: AssetImage('images/q_logo.png'),
+                        ),
+                      ),
+                      // ,
                     ),
-                    // ,
-                  ),
                   Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.only(top: 10),
                     child: Container(
-                      child: Text(file_name,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: HexColor(HexColor.white),
-                            fontFamily: 'montserrat_bold',
-                            decoration: TextDecoration.none,
-                          )),
+                      child: Text(
+                        file_name,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: HexColor(HexColor.white),
+                          fontFamily: 'montserrat_bold',
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -241,7 +265,10 @@ class Commons {
   }
 
   static ShowSuccessMassageDailong(
-      BuildContext context, Function CallBackMathod, String massage) {
+    BuildContext context,
+    Function CallBackMathod,
+    String massage,
+  ) {
     showGeneralDialog(
       barrierLabel: "Label",
       barrierDismissible: true,
@@ -250,115 +277,147 @@ class Commons {
       context: context,
       pageBuilder: (context, anim1, anim2) {
         return Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-            child: Container(
-              height: 320,
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(bottom: 0, left: 0, right: 0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: SizedBox.expand(
-                  child: Column(children: <Widget>[
-                Container(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          child: Container(
+            height: 320,
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.only(bottom: 0, left: 0, right: 0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: SizedBox.expand(
+              child: Column(
+                children: <Widget>[
+                  Container(
                     decoration: BoxDecoration(
                       color: HexColor(HexColor.primarycolor),
                       borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(7),
-                          topLeft: Radius.circular(7)),
+                        topRight: Radius.circular(7),
+                        topLeft: Radius.circular(7),
+                      ),
                     ),
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.all(10.0),
-                    child: const Text("Success",
+                    child: const Text(
+                      "Success",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontFamily: 'montserrat_medium',
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 20.0,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: const Image(
+                      height: 100,
+                      width: 100,
+                      alignment: Alignment.center,
+                      image: AssetImage('images/vmx_logo.png'),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(
+                      top: 10.0,
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: Center(
+                      child: Text(
+                        massage,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontFamily: 'montserrat_medium',
+                          fontSize: 14,
+                          color: HexColor(HexColor.primarycolor),
+                          fontFamily: 'montserrat_regular',
                           decoration: TextDecoration.none,
-                        ))),
-                Container(
-                  margin: const EdgeInsets.only(top: 20.0, left: 20, right: 20),
-                  child: const Image(
-                    height: 100,
-                    width: 100,
-                    alignment: Alignment.center,
-                    image: AssetImage(
-                      'images/vmx_logo.png',
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                    margin:
-                        const EdgeInsets.only(top: 10.0, left: 20, right: 20),
-                    child: Center(
-                      child: Text(massage,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor(HexColor.primarycolor),
-                            fontFamily: 'montserrat_regular',
-                            decoration: TextDecoration.none,
-                          )),
-                    )),
-                Container(
-                  margin: const EdgeInsets.only(top: 50),
-                  child: ListTile(
-                    title: Row(
-                      children: <Widget>[
-                        Expanded(
+                  Container(
+                    margin: const EdgeInsets.only(top: 50),
+                    child: ListTile(
+                      title: Row(
+                        children: <Widget>[
+                          Expanded(
                             child: Container(
-                                margin:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: HexColor(HexColor.primarycolor),
-                                    foregroundColor: HexColor(HexColor.white),
-                                    shadowColor: HexColor(HexColor.gray),
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(32.0)),
-                                    minimumSize: Size(100, 40), //////// HERE
+                              margin: const EdgeInsets.only(
+                                left: 20,
+                                right: 20,
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: HexColor(
+                                    HexColor.primarycolor,
                                   ),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    CallBackMathod();
-                                  },
-                                  child: Text('OK'),
-                                ))),
-                      ],
+                                  foregroundColor: HexColor(HexColor.white),
+                                  shadowColor: HexColor(HexColor.gray),
+                                  elevation: 3,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32.0),
+                                  ),
+                                  minimumSize: Size(100, 40), //////// HERE
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  CallBackMathod();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                )
-              ])),
-            ));
+                ],
+              ),
+            ),
+          ),
+        );
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
-          position:
-              Tween(begin: Offset(0, 1), end: Offset(0, 0)).animate(anim1),
+          position: Tween(
+            begin: Offset(0, 1),
+            end: Offset(0, 0),
+          ).animate(anim1),
           child: child,
         );
       },
     );
   }
 
-  static commonBottomSheet(title, data, dataCtrl,context,Function onDataSelected) async {
+  static commonBottomSheet(
+    title,
+    data,
+    dataCtrl,
+    context,
+    Function onDataSelected,
+  ) async {
     double itemHeight = 50.0; // Set your desired height for each item
-    double maxHeight = MediaQuery.of(context).size.height * 0.75; // Set the maximum height for the bottom sheet
+    double maxHeight =
+        MediaQuery.of(context).size.height *
+        0.75; // Set the maximum height for the bottom sheet
 
     int itemCount = data.length;
     double calculatedHeight = itemHeight * itemCount;
 
-    double sheetHeight =
-    calculatedHeight > maxHeight ? maxHeight : calculatedHeight;
+    double sheetHeight = calculatedHeight > maxHeight
+        ? maxHeight
+        : calculatedHeight;
     print(sheetHeight);
     showModalBottomSheet(
       context: context,
-        builder: (BuildContext context) {
+      builder: (BuildContext context) {
         return SafeArea(
           child: SizedBox(
             height: sheetHeight + 50,
@@ -386,28 +445,34 @@ class Commons {
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
-                            dataCtrl.text = data[index].toString();
-                            onDataSelected(data[index].toString());
-                            Navigator.of(context).pop();
+                          dataCtrl.text = data[index].toString();
+                          onDataSelected(data[index].toString());
+                          Navigator.of(context).pop();
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width,
                           alignment: Alignment.center,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
                           margin: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 2),
+                            horizontal: 10,
+                            vertical: 2,
+                          ),
                           // Remove fixed height and width properties
                           decoration: BoxDecoration(
                             color: HexColor(HexColor.white),
                             borderRadius: BorderRadius.circular(0),
                             boxShadow: const [
-                              BoxShadow(color: Colors.black26, blurRadius: 2.5)
+                              BoxShadow(color: Colors.black26, blurRadius: 2.5),
                             ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 4),
+                              vertical: 2,
+                              horizontal: 4,
+                            ),
                             child: Text(
                               data[index].toString(),
                               style: TextStyle(
@@ -439,5 +504,4 @@ class Commons {
       ),
     );
   }
-
 }
