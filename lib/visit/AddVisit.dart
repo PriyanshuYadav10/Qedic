@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:loader_overlay/loader_overlay.dart';
 
 import '../apis/app_exception.dart';
+import '../utility/LocationData.dart';
 import 'AllListingModel.dart';
 import 'ExistingMachineModel.dart';
 import '../model/LoginModel.dart';
@@ -24,6 +25,38 @@ class AddVisit extends StatefulWidget {
 
 class _AddVisitState extends State<AddVisit> {
   String _selecteddate = '';
+  final List<String> _prefixOptions = const ['Mr.', 'Mrs.', 'Dr.'];
+  String? selectedPrefix;
+  bool prefix_validate = false;
+  final List<String> _designationOptions = const [
+    'Owner',
+    'Director',
+    'Head-Of-The-Department',
+    'Admin In-charge',
+    'HR',
+    'Biomedical Head',
+  ];
+  TextEditingController designationCtrl = TextEditingController();
+  bool designation_validate = false;
+  final List<String> _specialtyOptions = const [
+    'MD-Radiodiagnosis',
+    'DMRD-Radiodiagnosis',
+    'MD-Obs/Gyn',
+    'MD-Ped',
+    'MD-Anaesthetist',
+    'MS-Obs/Gyn',
+    'MD-Med',
+    'MS-Gen. Surgery',
+    'MS-Ortho',
+    'DM-Cardio',
+    'DM-Neuro',
+    'DM-Urology',
+    'DM-Gastro',
+    'Sonologist',
+    'Other',
+  ];
+  TextEditingController specialtyCtrl = TextEditingController();
+  bool specialty_validate = false;
   TextEditingController cust_name_Controller = TextEditingController();
   bool cust_name_validate = false;
   TextEditingController center_name_Controller = TextEditingController();
@@ -97,6 +130,7 @@ class _AddVisitState extends State<AddVisit> {
   String referenceId = "";
   String existingMachineId = "";
   final List<String> purpose = [
+    "Opportunity",
     "Customer Meeting",
     "Official Meeting",
     "Service",
@@ -136,6 +170,9 @@ class _AddVisitState extends State<AddVisit> {
 
   bool isCheck = false;
   bool foreCast = false;
+  String ageingUnit = "Year";
+  int ageingYears = 0;
+  int ageingMonths = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -211,6 +248,30 @@ class _AddVisitState extends State<AddVisit> {
                               context, (selectedData) {
                             setState(() {
                               selected_purpose.text = selectedData;
+                              if (selectedData == "Opportunity") {
+                                isCheck = true;
+                              } else {
+                                isCheck = false;
+                                product_nameController.clear();
+                                qualityController.clear();
+                                valueController.clear();
+                                oppty_type.clear();
+                                productCategoryCtrl.clear();
+                                pnditCtrl.clear();
+                                quotationSubmitCtrl.clear();
+                                demoDoneCtrl.clear();
+                                expected_closure_dateController.clear();
+                                winLossCompanyId = '';
+                                winLossProductId = '';
+                                Win_Lost_CompanyController.clear();
+                                referenceId = '';
+                                Win_Lost_ProductController.clear();
+                                winlossDateCtrl.clear();
+                                statusCtrl.clear();
+                                referenceController.clear();
+                                commentsController.clear();
+                                foreCast = false;
+                              }
                               print(selectedData);
                             });
                           });
@@ -248,11 +309,208 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 20, right: 20, top: 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Prefix",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: HexColor(HexColor.primarycolor),
+                                      fontFamily: 'lato_bold',
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: HexColor(HexColor.gray_light),
+                                    border: Border.all(
+                                      color: selectedPrefix == null &&
+                                              prefix_validate
+                                          ? Colors.red
+                                          : HexColor(HexColor.gray_light),
+                                    ),
+                                  ),
+                                  child: DropdownButton<String>(
+                                    value: selectedPrefix,
+                                    isExpanded: true,
+                                    underline: const SizedBox(),
+                                    hint: Text(
+                                      "Prefix",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: HexColor(HexColor.gray_text),
+                                      ),
+                                    ),
+                                    items: _prefixOptions
+                                        .map((p) => DropdownMenuItem<String>(
+                                              value: p,
+                                              child: Text(p),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedPrefix = value;
+                                        prefix_validate = false;
+                                        if (value != 'Dr.') {
+                                          specialtyCtrl.clear();
+                                          specialty_validate = false;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Customer Name",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: HexColor(HexColor.primarycolor),
+                                      fontFamily: 'lato_bold',
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                TextField(
+                                  focusNode: _focus,
+                                  controller: cust_name_Controller,
+                                  style: TextStyle(
+                                      color: HexColor(HexColor.primary_s)),
+                                  decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.person_pin_outlined,
+                                        color: HexColor(HexColor.primary_s),
+                                      ),
+                                      errorText:
+                                          cust_name_Controller.text.isEmpty &&
+                                                  cust_name_validate
+                                              ? "Enter Customer Name"
+                                              : null,
+                                      border: const OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: HexColor(
+                                                  HexColor.gray_light))),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: HexColor(
+                                                  HexColor.gray_light))),
+                                      filled: true,
+                                      hintText: "Enter Customer Name",
+                                      fillColor:
+                                          HexColor(HexColor.gray_light)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: selectedPrefix == 'Dr.',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            margin:
+                                const EdgeInsets.only(left: 25, top: 15.0),
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "Specialty",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: HexColor(HexColor.primarycolor),
+                                fontFamily: 'lato_bold',
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              Commons.commonBottomSheet(
+                                'Select Specialty',
+                                _specialtyOptions.map((e) => e).toList(),
+                                specialtyCtrl,
+                                context,
+                                (selectedData) {
+                                  setState(() {
+                                    specialtyCtrl.text = selectedData;
+                                    specialty_validate = false;
+                                  });
+                                },
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  left: 15, right: 15, bottom: 10, top: 5),
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: specialtyCtrl.text.isEmpty &&
+                                          specialty_validate
+                                      ? Colors.red
+                                      : HexColor(HexColor.gray_text),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    specialtyCtrl.text.isEmpty
+                                        ? "Select Specialty"
+                                        : specialtyCtrl.text,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: HexColor(HexColor.black),
+                                      fontFamily: 'montserrat_regular',
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_drop_down_rounded,
+                                    size: 30,
+                                    color: HexColor(HexColor.gray_text),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Container(
-                      margin: const EdgeInsets.only(left: 25, top: 20.0),
+                      margin: const EdgeInsets.only(left: 25, top: 15.0),
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        "Customer Name",
+                        "Designation",
                         style: TextStyle(
                           fontSize: 16,
                           color: HexColor(HexColor.primarycolor),
@@ -261,32 +519,56 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin:
-                          const EdgeInsets.only(top: 3, left: 20, right: 20),
-                      child: TextField(
-                        focusNode: _focus,
-                        controller: cust_name_Controller,
-                        style: TextStyle(color: HexColor(HexColor.primary_s)),
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.person_pin_outlined,
-                              color: HexColor(HexColor.primary_s),
+                    GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        Commons.commonBottomSheet(
+                          'Select Designation',
+                          _designationOptions.map((e) => e).toList(),
+                          designationCtrl,
+                          context,
+                          (selectedData) {
+                            setState(() {
+                              designationCtrl.text = selectedData;
+                              designation_validate = false;
+                            });
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10, top: 5),
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: designationCtrl.text.isEmpty &&
+                                    designation_validate
+                                ? Colors.red
+                                : HexColor(HexColor.gray_text),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              designationCtrl.text.isEmpty
+                                  ? "Select Designation"
+                                  : designationCtrl.text,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: HexColor(HexColor.black),
+                                fontFamily: 'montserrat_regular',
+                                decoration: TextDecoration.none,
+                              ),
                             ),
-                            errorText: cust_name_Controller.text.isEmpty &&
-                                    cust_name_validate
-                                ? "Enter Customer Name"
-                                : null,
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            filled: true,
-                            hintText: "Enter Customer Name",
-                            fillColor: HexColor(HexColor.gray_light)),
+                            Icon(
+                              Icons.arrow_drop_down_rounded,
+                              size: 30,
+                              color: HexColor(HexColor.gray_text),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
@@ -378,27 +660,58 @@ class _AddVisitState extends State<AddVisit> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin:
-                          const EdgeInsets.only(top: 3, left: 20, right: 20),
-                      child: TextField(
-                        controller: districtController,
-                        style: TextStyle(color: HexColor(HexColor.primary_s)),
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.location_city_outlined,
-                              color: HexColor(HexColor.primary_s),
+                    GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        Commons.searchableBottomSheet(
+                          context: context,
+                          title: 'Select District',
+                          dataFuture: LocationData.rajasthanCities(),
+                          selectedValue: districtController.text.isEmpty
+                              ? null
+                              : districtController.text,
+                          onSelected: (v) {
+                            setState(() {
+                              districtController.text = v;
+                            });
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                            top: 3, left: 20, right: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: HexColor(HexColor.gray_light),
+                          border: Border.all(
+                              color: HexColor(HexColor.gray_light)),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_city_outlined,
+                                color: HexColor(HexColor.primary_s)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                districtController.text.isEmpty
+                                    ? "Select District"
+                                    : districtController.text,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: districtController.text.isEmpty
+                                      ? HexColor(HexColor.gray_text)
+                                      : HexColor(HexColor.primary_s),
+                                  fontFamily: 'montserrat_regular',
+                                ),
+                              ),
                             ),
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            filled: true,
-                            hintText: "Enter District",
-                            fillColor: HexColor(HexColor.gray_light)),
+                            Icon(Icons.arrow_drop_down_rounded,
+                                size: 28,
+                                color: HexColor(HexColor.gray_text)),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
@@ -819,32 +1132,108 @@ class _AddVisitState extends State<AddVisit> {
                     //     ),
                     //   ),
                     // ),
-                    Container(
-                      margin:
+                    Padding(
+                      padding:
                           const EdgeInsets.only(top: 3, left: 20, right: 20),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        controller: usg_ageingController,
-                        style: TextStyle(color: HexColor(HexColor.primary_s)),
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.model_training_rounded,
-                              color: HexColor(HexColor.primary_s),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Year",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: HexColor(HexColor.primarycolor),
+                                      fontFamily: 'lato_bold',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: HexColor(HexColor.gray_light),
+                                    border: Border.all(
+                                        color:
+                                            HexColor(HexColor.gray_light)),
+                                  ),
+                                  child: DropdownButton<int>(
+                                    value: ageingYears,
+                                    isExpanded: true,
+                                    underline: const SizedBox(),
+                                    items: List.generate(16, (i) => i)
+                                        .map((v) => DropdownMenuItem<int>(
+                                              value: v,
+                                              child: Text('$v'),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value == null) return;
+                                      setState(() {
+                                        ageingYears = value;
+                                        usg_ageingvalidate = false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                            errorText: usg_ageingController.text.isEmpty &&
-                                    other_Modelvalidate
-                                ? "Existing Machine Ageing"
-                                : null,
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: HexColor(HexColor.gray_light))),
-                            filled: true,
-                            hintText: "Existing Machine Ageing",
-                            fillColor: HexColor(HexColor.gray_light)),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Month",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: HexColor(HexColor.primarycolor),
+                                      fontFamily: 'lato_bold',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: HexColor(HexColor.gray_light),
+                                    border: Border.all(
+                                        color:
+                                            HexColor(HexColor.gray_light)),
+                                  ),
+                                  child: DropdownButton<int>(
+                                    value: ageingMonths,
+                                    isExpanded: true,
+                                    underline: const SizedBox(),
+                                    items: List.generate(12, (i) => i)
+                                        .map((v) => DropdownMenuItem<int>(
+                                              value: v,
+                                              child: Text('$v'),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value == null) return;
+                                      setState(() {
+                                        ageingMonths = value;
+                                        usg_ageingvalidate = false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Container(
@@ -928,38 +1317,38 @@ class _AddVisitState extends State<AddVisit> {
                             fillColor: HexColor(HexColor.gray_light)),
                       ),
                     ),
-                    CheckboxListTile(
-                      title: Text("Is Opportunity",
-                          style:
-                              TextStyle(color: HexColor(HexColor.primary_s))),
-                      value: isCheck,
-                      onChanged: (newValue) {
-                        setState(() {
-                          isCheck = newValue!;
-                          product_nameController.clear();
-                          qualityController.clear();
-                          valueController.clear();
-                          oppty_type.clear();
-                          productCategoryCtrl.clear();
-                          pnditCtrl.clear();
-                          quotationSubmitCtrl.clear();
-                          demoDoneCtrl.clear();
-                          expected_closure_dateController.clear();
-                          winLossCompanyId = '';
-                          winLossProductId = '';
-                          Win_Lost_CompanyController.clear();
-                          referenceId = '';
-                          Win_Lost_ProductController.clear();
-                          winlossDateCtrl.clear();
-                          statusCtrl.clear();
-                          referenceController.clear();
-                          commentsController.clear();
-                          foreCast = false;
-                        });
-                      },
-                      activeColor: HexColor(HexColor.primarycolor),
-                      controlAffinity: ListTileControlAffinity.trailing,
-                    ),
+                     CheckboxListTile(
+                        title: Text("Is Opportunity",
+                            style:
+                                TextStyle(color: HexColor(HexColor.primary_s))),
+                        value: isCheck,
+                        onChanged: (newValue) {
+                          setState(() {
+                            isCheck = newValue!;
+                            product_nameController.clear();
+                            qualityController.clear();
+                            valueController.clear();
+                            oppty_type.clear();
+                            productCategoryCtrl.clear();
+                            pnditCtrl.clear();
+                            quotationSubmitCtrl.clear();
+                            demoDoneCtrl.clear();
+                            expected_closure_dateController.clear();
+                            winLossCompanyId = '';
+                            winLossProductId = '';
+                            Win_Lost_CompanyController.clear();
+                            referenceId = '';
+                            Win_Lost_ProductController.clear();
+                            winlossDateCtrl.clear();
+                            statusCtrl.clear();
+                            referenceController.clear();
+                            commentsController.clear();
+                            foreCast = false;
+                          });
+                        },
+                        activeColor: HexColor(HexColor.primarycolor),
+                        controlAffinity: ListTileControlAffinity.trailing,
+                      ),
                     Visibility(
                       visible: isCheck,
                       child: Column(
@@ -1990,101 +2379,195 @@ class _AddVisitState extends State<AddVisit> {
     );
   }
 
+  bool _isAgeingInRange() {
+    final value = int.tryParse(usg_ageingController.text);
+    if (value == null) return false;
+    final maxValue = ageingUnit == "Month" ? 12 : 15;
+    return value >= 0 && value <= maxValue;
+  }
+
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w.\-]+@[\w\-]+(\.[\w\-]+)+$').hasMatch(email.trim());
+  }
+
   bool validation() {
     bool isvalide = true;
     if (selected_purpose.text.isEmpty) {
-      Commons.flushbar_Messege(context, "Please Enter purpose");
+      Commons.flushbar_Messege(context, "Please Enter Purpose");
       isvalide = false;
-    } else if (cust_name_Controller.text.isEmpty) {
+    } else if (selectedPrefix == null || selectedPrefix!.isEmpty) {
+      Commons.flushbar_Messege(context, "Please Select Prefix");
+      isvalide = false;
+      setState(() {
+        prefix_validate = true;
+      });
+    } else if (cust_name_Controller.text.trim().isEmpty) {
       Commons.flushbar_Messege(context, "Please Enter Customer Name");
       isvalide = false;
       setState(() {
         cust_name_validate = true;
       });
-    } else if (center_name_Controller.text.isEmpty) {
+    } else if (selectedPrefix == 'Dr.' && specialtyCtrl.text.isEmpty) {
+      Commons.flushbar_Messege(context, "Please Select Specialty");
+      isvalide = false;
+      setState(() {
+        specialty_validate = true;
+      });
+    } else if (designationCtrl.text.isEmpty) {
+      Commons.flushbar_Messege(context, "Please Select Designation");
+      isvalide = false;
+      setState(() {
+        designation_validate = true;
+      });
+    } else if (center_name_Controller.text.trim().isEmpty) {
       Commons.flushbar_Messege(context, "Please Enter Center Name");
       isvalide = false;
       setState(() {
         center_name_validate = true;
       });
-    } else if (city_nameController.text.isEmpty) {
+    } else if (addressController.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter Address");
+      isvalide = false;
+    } else if (districtController.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter District");
+      isvalide = false;
+    } else if (city_nameController.text.trim().isEmpty) {
       Commons.flushbar_Messege(context, "Please Enter City Name");
       isvalide = false;
       setState(() {
         city_namevalidate = true;
       });
-    } else if (contact_numberController.text.isEmpty) {
+    } else if (contact_numberController.text.trim().isEmpty) {
       Commons.flushbar_Messege(context, "Please Enter Contact Number");
       isvalide = false;
       setState(() {
         contact_numbervalidate = true;
       });
+    } else if (email_Controller.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter Email ID");
+      isvalide = false;
+      setState(() {
+        email_validate = true;
+      });
+    } else if (!_isValidEmail(email_Controller.text)) {
+      Commons.flushbar_Messege(context, "Please Enter a Valid Email ID");
+      isvalide = false;
+      setState(() {
+        email_validate = true;
+      });
     } else if (existingMachineCompanyController.text.isEmpty) {
       Commons.flushbar_Messege(
-          context, "Please Enter Existing Machine Company");
+          context, "Please Select Existing Machine Company");
       isvalide = false;
       setState(() {
         existingMachineCompanyvalidate = true;
       });
     } else if (existing_machineController.text.isEmpty) {
-      Commons.flushbar_Messege(context, "Please Enter Existing Machine Model");
+      Commons.flushbar_Messege(context, "Please Select Existing Machine Model");
       isvalide = false;
       setState(() {
         existing_machinevalidate = true;
       });
-    } else if (usg_ageingController.text.isEmpty) {
-      Commons.flushbar_Messege(context, "Please Enter Machine Ageing");
+    } else if (existing_machineController.text == 'Other' &&
+        other_ModelController.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter Other Model");
       isvalide = false;
       setState(() {
-        usg_ageingvalidate = true;
+        other_Modelvalidate = true;
+      });
+    } else if (remark_supportController.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter Remark");
+      isvalide = false;
+      setState(() {
+        remark_supportvalidate = true;
+      });
+    } else if (support_requiredController.text.trim().isEmpty) {
+      Commons.flushbar_Messege(context, "Please Enter Support Required");
+      isvalide = false;
+      setState(() {
+        support_requiredvalidate = true;
       });
     }
-    if (isCheck == true) {
+    if (isvalide && isCheck == true) {
       if (product_nameController.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter Product");
+        Commons.flushbar_Messege(context, "Please Select Product");
         isvalide = false;
         setState(() {
           product_namevalidate = true;
         });
+      } else if (qualityController.text.trim().isEmpty) {
+        Commons.flushbar_Messege(context, "Please Enter Quantity");
+        isvalide = false;
+        setState(() {
+          qualityvalidate = true;
+        });
+      } else if (valueController.text.trim().isEmpty) {
+        Commons.flushbar_Messege(context, "Please Enter Value (INR)");
+        isvalide = false;
+        setState(() {
+          valueValidate = true;
+        });
+      } else if (double.tryParse(valueController.text.trim()) == null) {
+        Commons.flushbar_Messege(context, "Please Enter a Valid Value (INR)");
+        isvalide = false;
+        setState(() {
+          valueValidate = true;
+        });
+      } else if (modalityCtrl.text.isEmpty) {
+        Commons.flushbar_Messege(context, "Please Select Modality");
+        isvalide = false;
       } else if (oppty_type.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter oppty Type");
+        Commons.flushbar_Messege(context, "Please Select Oppty Type");
         isvalide = false;
         setState(() {
           oppty_typevalidate = true;
         });
       } else if (productCategoryCtrl.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter Product Category");
+        Commons.flushbar_Messege(context, "Please Select Product Category");
         isvalide = false;
       } else if (pnditCtrl.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter pndt");
+        Commons.flushbar_Messege(context, "Please Select PNDT");
         isvalide = false;
-      } else if (quotationSubmitCtrl.text.isEmpty && (oppty_type.text == 'Hot' ||
-                                oppty_type.text == 'Warm' ||
-                                oppty_type.text == 'Cold')) {
-        Commons.flushbar_Messege(context, "Please Enter Quotation Submitted");
+      } else if ((oppty_type.text == 'Hot' ||
+              oppty_type.text == 'Warm' ||
+              oppty_type.text == 'Cold') &&
+          quotationSubmitCtrl.text.isEmpty) {
+        Commons.flushbar_Messege(context, "Please Select Quotation Submitted");
         isvalide = false;
       } else if (demoDoneCtrl.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter Demo Done Or Not");
+        Commons.flushbar_Messege(context, "Please Select Demo Done Or Not");
         isvalide = false;
-      } else if (Win_Lost_CompanyController.text.isEmpty && (oppty_type.text == 'Won' ||
-                                oppty_type.text == 'Loss')) {
-        Commons.flushbar_Messege(context, "Please Enter Win/Loss Company");
+      } else if ((oppty_type.text == 'Hot' || oppty_type.text == 'Warm') &&
+          expected_closure_dateController.text.isEmpty) {
+        Commons.flushbar_Messege(
+            context, "Please Select Expected Closure Date");
+        isvalide = false;
+        setState(() {
+          expected_closure_datevalidate = true;
+        });
+      } else if ((oppty_type.text == 'Won' || oppty_type.text == 'Loss') &&
+          Win_Lost_CompanyController.text.isEmpty) {
+        Commons.flushbar_Messege(context, "Please Select Win/Loss Company");
         isvalide = false;
         setState(() {
           Win_Lost_Companyvalidate = true;
         });
-      } else if (Win_Lost_ProductController.text.isEmpty&&( oppty_type.text == 'Won' ||
-                                oppty_type.text == 'Loss')) {
-        Commons.flushbar_Messege(context, "Please Enter Win/Loss Product");
+      } else if ((oppty_type.text == 'Won' || oppty_type.text == 'Loss') &&
+          Win_Lost_ProductController.text.isEmpty) {
+        Commons.flushbar_Messege(context, "Please Select Win/Loss Product");
         isvalide = false;
         setState(() {
           Win_Lost_Productvalidate = true;
         });
-      // } else if (statusCtrl.text.isEmpty) {
-      //   Commons.flushbar_Messege(context, "Please Enter Status");
-      //   isvalide = false;
+      } else if ((oppty_type.text == 'Won' || oppty_type.text == 'Loss') &&
+          winlossDateCtrl.text.isEmpty) {
+        Commons.flushbar_Messege(context, "Please Select Win/Loss Date");
+        isvalide = false;
       } else if (referenceController.text.isEmpty) {
-        Commons.flushbar_Messege(context, "Please Enter Reference");
+        Commons.flushbar_Messege(context, "Please Select Reference");
+        isvalide = false;
+      } else if (commentsController.text.trim().isEmpty) {
+        Commons.flushbar_Messege(context, "Please Enter Comments");
         isvalide = false;
       }
     }
@@ -2272,7 +2755,11 @@ class _AddVisitState extends State<AddVisit> {
       var request = http.MultipartRequest("POST", Uri.parse(Commons.addVisit));
       //add text fields
       request.fields["user_id"] = "${loginModel.data!.id ?? ""}";
-      request.fields["cust_name"] = cust_name_Controller.text;
+      request.fields["cust_name"] =
+          "${selectedPrefix ?? ''} ${cust_name_Controller.text.trim()}".trim();
+      request.fields["prefix"] = selectedPrefix ?? '';
+      request.fields["designation"] = designationCtrl.text;
+      request.fields["specialty"] = specialtyCtrl.text;
       request.fields["city_name"] = city_nameController.text;
       request.fields["center_name"] = center_name_Controller.text;
       request.fields["contact_number"] = contact_numberController.text;
@@ -2280,7 +2767,7 @@ class _AddVisitState extends State<AddVisit> {
       request.fields["existing_machine"] = existingMachineId.toString();
       // request.fields["existing_machine_capacity"] = existing_machineCapacityController.text;
       request.fields["is_opportunity"] = isCheck == false ? '0' : '1';
-      request.fields["usg_ageing"] = usg_ageingController.text;
+      request.fields["usg_ageing"] = "$ageingYears Year $ageingMonths Month";
       request.fields["product_name"] = product_nameController.text;
       request.fields["oppty_type"] = oppty_type.text;
       request.fields["expected_closure_date"] = _selecteddate;
@@ -2294,7 +2781,10 @@ class _AddVisitState extends State<AddVisit> {
       request.fields["district"] = districtController.text;
       request.fields["existing_machine_company"] =
           existingMachineCompanyId.toString();
-      request.fields["machine_model"] = other_ModelController.text;
+      request.fields["machine_model"] =
+          existing_machineController.text == 'Other'
+              ? other_ModelController.text.trim()
+              : existing_machineController.text.trim();
       request.fields["product_value"] = valueController.text;
       request.fields["product_category"] = productCategoryCtrl.text;
       request.fields["pndt"] = pnditCtrl.text;
@@ -2329,7 +2819,7 @@ class _AddVisitState extends State<AddVisit> {
 
         if (successModel.status == 1) {
           Commons.Fluttertoast_Messege(context, successModel.message ?? "");
-          Navigator.pop(context);
+          Navigator.pop(context, {'isOpportunity': isCheck});
         } else {
           Commons.flushbar_Messege(context, successModel.message!);
         }

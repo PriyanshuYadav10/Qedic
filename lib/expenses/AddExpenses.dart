@@ -318,7 +318,7 @@ class _AddExpensesState extends State<AddExpenses> {
                         margin: EdgeInsets.only(left: 20, right: 15, top: 5),
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Travel with MD",
+                          "End-To-End Travel with Manager/Snr Officials",
                           style: TextStyle(
                             fontSize: 14,
                             color: HexColor(HexColor.black),

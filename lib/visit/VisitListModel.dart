@@ -31,6 +31,9 @@ class VisitListData {
   var id;
   var userId;
   var purpose;
+  var prefix;
+  var designation;
+  var specialty;
   var custName;
   var centerName;
   var cityName;
@@ -66,6 +69,7 @@ class VisitListData {
   var winLossDate;
   var opportunityStatus;
   var reffrenceUserId;
+  var assignedUserId;
   var comment;
   var forcast;
   var isEditable;
@@ -79,6 +83,9 @@ class VisitListData {
       {this.id,
       this.userId,
       this.purpose,
+      this.prefix,
+      this.designation,
+      this.specialty,
       this.custName,
       this.centerName,
       this.cityName,
@@ -126,6 +133,9 @@ class VisitListData {
     id = json['id'];
     userId = json['user_id'];
     purpose = json['purpose'];
+    prefix = json['prefix'];
+    designation = json['designation'];
+    specialty = json['specialty'];
     custName = json['cust_name'];
     centerName = json['center_name'];
     cityName = json['city_name'];
@@ -161,6 +171,7 @@ class VisitListData {
     winLossDate = json['win_loss_date'];
     opportunityStatus = json['opportunity_status'];
     reffrenceUserId = json['reffrence_user_id'];
+    assignedUserId = json['assigned_user_id'];
     comment = json['comment'];
     forcast = json['forcast'];
     isEditable = json['is_editable'];
@@ -175,6 +186,9 @@ class VisitListData {
     data['id'] = this.id;
     data['user_id'] = this.userId;
     data['purpose'] = this.purpose;
+    data['prefix'] = this.prefix;
+    data['designation'] = this.designation;
+    data['specialty'] = this.specialty;
     data['cust_name'] = this.custName;
     data['center_name'] = this.centerName;
     data['city_name'] = this.cityName;
@@ -210,6 +224,7 @@ class VisitListData {
     data['win_loss_date'] = this.winLossDate;
     data['opportunity_status'] = this.opportunityStatus;
     data['reffrence_user_id'] = this.reffrenceUserId;
+    data['assigned_user_id'] = this.assignedUserId;
     data['comment'] = this.comment;
     data['forcast'] = this.forcast;
     data['is_editable'] = this.isEditable;

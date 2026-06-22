@@ -504,4 +504,153 @@ class Commons {
       ),
     );
   }
+
+  static Future<void> searchableBottomSheet({
+    required BuildContext context,
+    required String title,
+    List<String>? data,
+    Future<List<String>>? dataFuture,
+    required ValueChanged<String> onSelected,
+    String? selectedValue,
+  }) async {
+    assert(data != null || dataFuture != null,
+        'Provide either data or dataFuture');
+    String query = '';
+    List<String>? loaded = data;
+    if (loaded == null && dataFuture != null) {
+      loaded = await dataFuture;
+    }
+    final source = loaded ?? const <String>[];
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom,
+          ),
+          child: StatefulBuilder(
+            builder: (ctx, setSheetState) {
+              final filtered = query.trim().isEmpty
+                  ? source
+                  : source
+                      .where((d) =>
+                          d.toLowerCase().contains(query.toLowerCase().trim()))
+                      .toList();
+              return SafeArea(
+                child: SizedBox(
+                  height: MediaQuery.of(ctx).size.height * 0.75,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: HexColor(HexColor.black),
+                                  fontFamily: 'montserrat_medium',
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded),
+                              onPressed: () => Navigator.of(sheetCtx).pop(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          autofocus: false,
+                          onChanged: (v) =>
+                              setSheetState(() => query = v),
+                          decoration: InputDecoration(
+                            hintText: 'Search…',
+                            prefixIcon: const Icon(Icons.search_rounded),
+                            isDense: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: filtered.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No matches',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: HexColor(HexColor.gray_text),
+                                    fontFamily: 'montserrat_regular',
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: filtered.length,
+                                itemBuilder: (_, i) {
+                                  final item = filtered[i];
+                                  final isSel = item == selectedValue;
+                                  return InkWell(
+                                    onTap: () {
+                                      onSelected(item);
+                                      Navigator.of(sheetCtx).pop();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: HexColor(HexColor.gray_light),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              item,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: HexColor(HexColor.black),
+                                                fontFamily: isSel
+                                                    ? 'montserrat_bold'
+                                                    : 'montserrat_regular',
+                                              ),
+                                            ),
+                                          ),
+                                          if (isSel)
+                                            Icon(Icons.check_rounded,
+                                                size: 18,
+                                                color: HexColor(
+                                                    HexColor.primary_s)),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 }
