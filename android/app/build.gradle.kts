@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.app.qedic"
-        minSdk = flutter.minSdkVersion
+        minSdk = 24 // Android 7.0 — required by geolocator_android; matches Flutter 3.41 default
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName

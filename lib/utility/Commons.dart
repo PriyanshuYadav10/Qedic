@@ -15,7 +15,7 @@ class Commons {
   // static String baseUrl = "";
 
   /*live*/
-  static String baseUrl = "https://update.qedichealthcare.com/api/";
+  static String baseUrl = "https://qedichealthcare.com/api/";
 
   static String loginapi = "${baseUrl}login";
   static String holidayList = "${baseUrl}holidayList";

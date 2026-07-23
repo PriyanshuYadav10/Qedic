@@ -8,7 +8,7 @@ import 'package:excel/excel.dart' as ex;
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:qedic/visit/UpdateVisit.dart';
 import '../apis/app_exception.dart';
 import '../quotation/GenerateQuotation.dart';
@@ -228,10 +228,11 @@ class _VisitListState extends State<VisitList> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: HexColor(HexColor.primary_s).withOpacity(0.08),
+                color: HexColor(HexColor.primary_s).withOpacity(0.14),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: HexColor(HexColor.primary_s).withOpacity(0.25),
+                  color: HexColor(HexColor.primary_s),
+                  width: 1.2,
                 ),
               ),
               child: Row(
@@ -243,30 +244,33 @@ class _VisitListState extends State<VisitList> {
                     child: Text(
                       'Showing ${displayList.length} of ${visitListData.length}',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor(HexColor.primary_s),
+                        fontSize: 12.5,
+                        color: HexColor(HexColor.black),
                         fontFamily: 'montserrat_medium',
                       ),
                     ),
                   ),
                   InkWell(
                     onTap: () => setState(_resetFilters),
-                    borderRadius: BorderRadius.circular(6),
-                    child: Padding(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: HexColor(HexColor.primary_s),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: const [
                           Icon(Icons.close_rounded,
-                              size: 14,
-                              color: HexColor(HexColor.primary_s)),
-                          const SizedBox(width: 2),
+                              size: 14, color: Colors.white),
+                          SizedBox(width: 2),
                           Text(
                             'Clear',
                             style: TextStyle(
                               fontSize: 12,
-                              color: HexColor(HexColor.primary_s),
+                              color: Colors.white,
                               fontFamily: 'montserrat_medium',
                             ),
                           ),
@@ -1236,29 +1240,64 @@ class _VisitListState extends State<VisitList> {
             ? null
             : [
                 if (showSearch)
-                  IconButton(
-                    tooltip: 'Advance Search',
-                    onPressed: _openAdvanceSearch,
-                    icon: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        const Icon(Icons.search, color: Colors.white),
-                        if (_hasActiveFilter)
-                          Positioned(
-                            right: -2,
-                            top: -2,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.redAccent,
-                                shape: BoxShape.circle,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Tooltip(
+                      message: 'Filter',
+                      child: InkWell(
+                        onTap: _openAdvanceSearch,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.filter_alt_rounded,
+                                      size: 16,
+                                      color: HexColor(HexColor.primary_s)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Filter',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: HexColor(HexColor.primary_s),
+                                      fontFamily: 'montserrat_bold',
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                      ],
+                            if (_hasActiveFilter)
+                              Positioned(
+                                right: -2,
+                                top: -2,
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: Colors.redAccent,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: HexColor(HexColor.primary_s),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+                const SizedBox(width: 8),
                 if (showDownload)
                   PopupMenuButton<String>(
                   tooltip: 'Download',
@@ -1335,20 +1374,12 @@ class _VisitListState extends State<VisitList> {
     ];
   }
 
-  Future<bool> _ensureStoragePermission() async {
-    if (!Platform.isAndroid) return true;
-
-    final storage = await Permission.storage.request();
-    if (storage.isGranted || storage.isLimited) return true;
-
-    final manage = await Permission.manageExternalStorage.request();
-    return manage.isGranted || manage.isLimited;
-  }
-
-  Future<Directory> _resolveDownloadsDirectory() async {
+  // Writes to the app's own storage (no runtime permission needed on any
+  // Android version) and hands the file to the OS share sheet, so the user
+  // can save it to Downloads / Drive / email. This avoids the
+  // MANAGE_EXTERNAL_STORAGE ("All files access") permission that Play rejects.
+  Future<Directory> _resolveExportDirectory() async {
     if (Platform.isAndroid) {
-      final downloads = Directory('/storage/emulated/0/Download');
-      if (await downloads.exists()) return downloads;
       final external = await getExternalStorageDirectory();
       if (external != null) return external;
     }
@@ -1362,15 +1393,9 @@ class _VisitListState extends State<VisitList> {
       return;
     }
 
-    final granted = await _ensureStoragePermission();
-    if (!granted) {
-      Commons.flushbar_Messege(context, 'Storage permission required');
-      return;
-    }
-
     context.loaderOverlay.show();
     try {
-      final dir = await _resolveDownloadsDirectory();
+      final dir = await _resolveExportDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       late File outFile;
 
@@ -1386,9 +1411,11 @@ class _VisitListState extends State<VisitList> {
 
       if (!mounted) return;
       context.loaderOverlay.hide();
-      Commons.Fluttertoast_Messege(
-        context,
-        'Saved to: ${outFile.path}',
+
+      await Share.shareXFiles(
+        [XFile(outFile.path)],
+        subject: 'Opportunities',
+        text: 'Opportunities export',
       );
     } catch (e) {
       if (mounted) context.loaderOverlay.hide();

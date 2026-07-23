@@ -599,6 +599,7 @@ class _ExpensesState extends State<Expenses> {
       var response = String.fromCharCodes(responseData);
 
       context.loaderOverlay.hide();
+
       print('sarjeet log  ${response}');
 
       if (response == null ||
@@ -610,6 +611,7 @@ class _ExpensesState extends State<Expenses> {
         ExpensesListModel expensesListModel =
             ExpensesListModel.fromJson(jsonDecode(response));
 
+      print("sarjeet ${expensesListModel.data!.length}");
         if (expensesListModel.status == 1) {
           setState(() {
             expenses_list = expensesListModel.data ?? <Data_Expenses>[];
