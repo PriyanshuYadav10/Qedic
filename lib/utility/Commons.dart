@@ -59,6 +59,8 @@ class Commons {
   static String goalDevelopmentSaveSubmit =
       "${baseUrl}goal-setting/development/save-submit";
   static String goalEmployeeSignoff = "${baseUrl}goal-setting/signoff/employee";
+  static String quotationProducts = "${baseUrl}quotation-products";
+  static String quotations = "${baseUrl}quotations";
 
   static flushbar_Messege(BuildContext context, String text) {
     Flushbar(

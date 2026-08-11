@@ -82,12 +82,15 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
       newstartDate =
           Commons.Date_format2(widget.data_expenses.selectDate.toString());
       newstartDateymd = widget.data_expenses.selectDate.toString();
-      if (widget.data_expenses.travelPurpose!.isNotEmpty) {
+      // if (widget.data_expenses.travelPurpose!.isNotEmpty) {
         travel_purpose.text = widget.data_expenses.travelPurpose.toString();
-      }
+      // }
 
-      visit_name_selected = widget.data_expenses.visitName.toString();
-      visit_id_selected = widget.data_expenses.visitId.toString();
+      final visitName = widget.data_expenses.visitName?.toString() ?? "";
+      if (visitName.isNotEmpty && visitName != "null") {
+        visit_name_selected = visitName;
+        visit_id_selected = widget.data_expenses.visitId?.toString() ?? "";
+      }
       formlocation_controller.text =
           widget.data_expenses.fromLocation.toString();
       tolocation_controller.text = widget.data_expenses.toLocation.toString();
@@ -995,7 +998,7 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
     if (newstartDate == "Select Date") {
       Commons.flushbar_Messege(_context, "Select Date");
       isvalide = false;
-    } else if (travel_purpose == "Select Purpose of Travel") {
+    } else if (travel_purpose.text == "Select Purpose of Travel") {
       Commons.flushbar_Messege(_context, "Select Purpose of Travel");
       isvalide = false;
     }
@@ -1360,7 +1363,7 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
       // request.fields["route_type"] = routetype;
       // request.fields["travel_with_md"] = Traveltype;
 
-      if (travel_purpose == "Select Purpose of Travel") {
+      if (travel_purpose.text == "Select Purpose of Travel") {
         travel_purpose.text = "";
       }
 
@@ -1369,7 +1372,7 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
       request.fields["visit_id"] = visit_id_selected;
       request.fields["travel_purpose"] = travel_purpose.text;
       request.fields["expenses_id"] = "${widget.data_expenses.id}";
-      if (Traveltype.toLowerCase() == "Yes") {
+      if (Traveltype.toLowerCase() == "yes") {
         request.fields["from_location"] = "";
         request.fields["to_location"] = "";
         request.fields["mileage_km"] = "";
@@ -1381,19 +1384,6 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
         request.fields["other_exp"] = "";
         request.fields["other_exp_receipt"] = "";
       } else {
-        if (routetype.toLowerCase() == "local") {
-          request.fields["from_location"] = "";
-          request.fields["to_location"] = "";
-          request.fields["hotel_exp"] = "";
-          request.fields["hotel_exp_receipt"] = "";
-          request.fields["vechile_fare"] = "";
-          request.fields["vechile_receipt"] = "";
-
-          request.fields["mileage_km"] = km_controller.text;
-          request.fields["mileage_allowance"] = mileage_controller.text;
-          request.fields["other_exp"] = other_controller.text;
-          request.fields["other_exp_receipt"] = other_exp_receipt;
-        } else {
           request.fields["from_location"] = formlocation_controller.text;
           request.fields["to_location"] = tolocation_controller.text;
           request.fields["mileage_km"] = km_controller.text;
@@ -1404,7 +1394,6 @@ class _UpdateExpensesState extends State<UpdateExpenses> {
           request.fields["vechile_receipt"] = vechile_receipt;
           request.fields["other_exp"] = other_controller.text;
           request.fields["other_exp_receipt"] = other_exp_receipt;
-        }
       }
 
       request.fields["remark"] = remark_supportController.text;
