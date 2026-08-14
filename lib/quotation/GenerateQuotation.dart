@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../model/LoginModel.dart';
 import '../utility/Commons.dart';
@@ -22,12 +23,36 @@ class GenerateQuotation extends StatefulWidget {
 /// One editable term row on the Terms & Conditions step.
 class _TermDraft {
   final TextEditingController title;
+
+  /// Plain text — what the user reads and edits. The server stores rich HTML,
+  /// which is unreadable in a TextField.
   final TextEditingController content;
+
+  /// The server's original HTML, kept so an untouched term round-trips with its
+  /// formatting intact instead of being flattened into `<p>` blocks.
+  final String? originalHtml;
+  final String originalText;
+
   bool included = true;
 
-  _TermDraft({required String title, required String content})
-      : title = TextEditingController(text: title),
-        content = TextEditingController(text: content);
+  _TermDraft({
+    required String title,
+    required String content,
+    this.originalHtml,
+  })  : title = TextEditingController(text: title),
+        content = TextEditingController(text: content),
+        originalText = content;
+
+  /// Send back the original HTML when the text is untouched — the PDF keeps its
+  /// headings, bullets and bold runs. Edited terms get re-wrapped from plain
+  /// text, which necessarily loses that formatting.
+  String get contentForApi {
+    final current = content.text.trim();
+    if (originalHtml != null && current == originalText.trim()) {
+      return originalHtml!;
+    }
+    return _textToHtml(current);
+  }
 
   void dispose() {
     title.dispose();
@@ -56,6 +81,10 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
 
   QuotationProduct? _product;
   int? _userId;
+
+  /// The visit/opportunity row this quotation is raised against. It arrives as
+  /// a dynamic from the list model, so parse rather than cast.
+  int? get _visitId => int.tryParse('${widget.visitListData.id ?? ''}');
 
   // Step 0 — customer + sales contact
   final _customerName = TextEditingController();
@@ -189,8 +218,8 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
 
     for (final t in _terms) {
       t.dispose();
-    }
-    _terms
+        }
+        _terms
       ..clear()
       ..addAll(
         ([...response.termsAndConditions]
@@ -198,7 +227,8 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
             .map(
               (t) => _TermDraft(
                 title: t.title ?? '',
-                content: t.content ?? '',
+                content: _htmlToText(t.content),
+                originalHtml: t.content,
               ),
             ),
       );
@@ -279,8 +309,9 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
 
     setState(() => _submitting = true);
     try {
-      await _api.createQuotation(
+      final created = await _api.createQuotation(
         userId: _userId ?? 0,
+        visitId: _visitId,
         productId: product!.id!,
         customer: {
           'name': _customerName.text.trim(),
@@ -308,7 +339,7 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
       );
       if (!mounted) return;
       setState(() => _submitting = false);
-      _showSubmittedDialog();
+      _showSubmittedDialog(created);
     } catch (e) {
       if (!mounted) return;
       setState(() => _submitting = false);
@@ -324,7 +355,7 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     return List.generate(included.length, (i) {
       return {
         'title': included[i].title.text.trim(),
-        'content': _textToHtml(included[i].content.text),
+        'content': included[i].contentForApi,
         'sort_order': i + 1,
       };
     });
@@ -366,16 +397,56 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     );
   }
 
-  void _showSubmittedDialog() {
+  void _showSubmittedDialog(CreatedQuotation created) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Submitted for Approval'),
-        content: const Text(
-          'Quotation has been submitted. It will be reviewed by your Manager '
-          'and then by Super Admin. You can download the PDF once both have '
-          'approved.',
+        title: const Text('Quotation Generated'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (created.quotationNo != null)
+              _summaryRow('Quotation No', created.quotationNo!),
+            if (created.validUntil != null)
+              _summaryRow('Valid Until', _dateOnly(created.validUntil!)),
+            _summaryRow(
+              'Total',
+              _currency.format(created.totalAmount),
+              bold: true,
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openUrl(created.openUrl),
+                    icon: const Icon(Icons.visibility_outlined, size: 18),
+                    label: const Text('View'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: HexColor(HexColor.primary_s),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _openUrl(created.downloadUrl ?? created.pdfUrl),
+                    icon: const Icon(Icons.download_rounded, size: 18),
+                    label: const Text('Download'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: HexColor(HexColor.primary_s),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -383,11 +454,27 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
               Navigator.of(ctx).pop();
               Navigator.of(context).pop(true);
             },
-            child: const Text('OK'),
+            child: const Text('Done'),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _openUrl(String? url) async {
+    if (url == null || url.isEmpty) {
+      _fail('No document link was returned for this quotation');
+      return;
+    }
+    try {
+      final launched = await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) _fail('Could not open the quotation PDF');
+    } catch (_) {
+      if (mounted) _fail('Could not open the quotation PDF');
+    }
   }
 
   // ------------------------------------------------------------------ maths
@@ -974,7 +1061,7 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: Text(
-              _htmlToText(term.content.text),
+              term.content.text,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -1229,19 +1316,82 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
 /// in and wrap paragraphs going back out.
 String _htmlToText(String? html) {
   if (html == null || html.trim().isEmpty) return '';
-  return html
+
+  final stripped = html
+      .replaceAll(
+          RegExp(r'<(script|style)[^>]*>.*?</\1>',
+              caseSensitive: false, dotAll: true),
+          '')
       .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
-      .replaceAll(RegExp(r'</(p|div|li|ul|ol|h[1-6])>', caseSensitive: false),
-          '\n')
-      .replaceAll(RegExp(r'<[^>]*>'), '')
-      .replaceAll('&nbsp;', ' ')
-      .replaceAll('&amp;', '&')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&quot;', '"')
-      .replaceAll('&#39;', "'")
+      // List items read as a wall of text without their markers.
+      .replaceAll(RegExp(r'<li[^>]*>', caseSensitive: false), '\n• ')
+      .replaceAll(
+          RegExp(r'</(p|div|li|ul|ol|tr|h[1-6])>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'<[^>]*>'), '');
+
+  return _decodeHtmlEntities(stripped)
+      .replaceAll('\r\n', '\n')
+      .replaceAll('\r', '\n')
+      .split('\n')
+      .map((line) => line.trimRight())
+      .join('\n')
       .replaceAll(RegExp(r'\n{3,}'), '\n\n')
       .trim();
+}
+
+const Map<String, String> _namedHtmlEntities = {
+  'amp': '&',
+  'lt': '<',
+  'gt': '>',
+  'quot': '"',
+  'apos': "'",
+  'nbsp': ' ',
+  'ndash': '–',
+  'mdash': '—',
+  'lsquo': '‘',
+  'rsquo': '’',
+  'ldquo': '“',
+  'rdquo': '”',
+  'bull': '•',
+  'middot': '·',
+  'hellip': '…',
+  'times': '×',
+  'deg': '°',
+  'trade': '™',
+  'copy': '©',
+  'reg': '®',
+  'rarr': '→',
+  'check': '✓',
+};
+
+/// Decodes named and numeric entities in a single pass, so an escaped sequence
+/// like `&amp;lt;` yields `&lt;` rather than being decoded twice into `<`.
+String _decodeHtmlEntities(String input) {
+  return input.replaceAllMapped(
+    RegExp(r'&(#[xX]?[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);'),
+    (match) {
+      final entity = match.group(1)!;
+      if (entity.startsWith('#')) {
+        final isHex = entity.length > 1 && (entity[1] == 'x' || entity[1] == 'X');
+        final digits = isHex ? entity.substring(2) : entity.substring(1);
+        final code = int.tryParse(digits, radix: isHex ? 16 : 10);
+        if (code != null && code > 0 && code <= 0x10FFFF) {
+          return String.fromCharCode(code);
+        }
+        return match.group(0)!;
+      }
+      return _namedHtmlEntities[entity.toLowerCase()] ?? match.group(0)!;
+    },
+  );
+}
+
+/// The API returns full ISO timestamps; the UI only ever wants the date.
+String _dateOnly(String value) {
+  try {
+    return DateFormat('dd MMM yyyy').format(DateTime.parse(value));
+  } catch (_) {
+    return value;
+  }
 }
 
 String _textToHtml(String text) {

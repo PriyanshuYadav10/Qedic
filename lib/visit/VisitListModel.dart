@@ -1,3 +1,5 @@
+import '../quotation/QuotationModels.dart';
+
 class VisitListModel {
   int? status;
   var message;
@@ -74,6 +76,8 @@ class VisitListData {
   var forcast;
   var isEditable;
   var isDeleteable;
+  var quotationCount;
+  List<QuotationSummary> quotations = const [];
   bool isSelected = false;
   var createdAt;
   var updatedAt;
@@ -176,6 +180,8 @@ class VisitListData {
     forcast = json['forcast'];
     isEditable = json['is_editable'];
     isDeleteable = json['is_deleteable'];
+    quotationCount = json['quotation_count'];
+    quotations = QuotationSummary.listFrom(json['quotations']);
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     uname = json['uname'];
@@ -232,6 +238,13 @@ class VisitListData {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['uname'] = this.uname;
+    data['quotation_count'] = this.quotationCount;
     return data;
   }
+
+  bool get hasQuotation => quotations.isNotEmpty;
+
+  /// The most recently raised quotation — the list returns them oldest first.
+  QuotationSummary? get latestQuotation =>
+      quotations.isEmpty ? null : quotations.last;
 }

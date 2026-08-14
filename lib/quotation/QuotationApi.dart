@@ -66,9 +66,10 @@ class QuotationApi {
   }
 
   /// POST quotations
-  Future<Map<String, dynamic>> createQuotation({
+  Future<CreatedQuotation> createQuotation({
     required int userId,
     required int productId,
+    int? visitId,
     required Map<String, dynamic> customer,
     required Map<String, dynamic> salesContact,
     required List<SelectedQuotationItem> selectedProbes,
@@ -78,6 +79,7 @@ class QuotationApi {
   }) async {
     final body = <String, dynamic>{
       'user_id': userId,
+      if (visitId != null) 'visit_id': visitId,
       'product_id': productId,
       'customer': customer,
       'sales_contact': salesContact,
@@ -90,7 +92,12 @@ class QuotationApi {
       'quotation_overrides': quotationOverrides,
       'terms_and_conditions': termsAndConditions,
     };
-    return _post(Commons.quotations, body);
+    final json = await _post(Commons.quotations, body);
+    final data = json['data'];
+    if (data is! Map<String, dynamic>) {
+      throw QuotationApiException('Quotation was not returned by the server');
+    }
+    return CreatedQuotation.fromJson(data);
   }
 
   Future<Map<String, dynamic>> _get(String url) async {

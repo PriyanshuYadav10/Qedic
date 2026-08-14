@@ -194,6 +194,226 @@ class QuotationTerm {
   }
 }
 
+/// POST quotations — the quotation the server created, also returned by
+/// GET quotations/{id}.
+class CreatedQuotation {
+  final int? id;
+  final String? quotationNo;
+  final int? userId;
+  final int? visitId;
+  final int? productId;
+  final String? customerName;
+  final String? customerAddress;
+  final String? customerPhone;
+  final String? customerEmail;
+  final String? salesName;
+  final String? salesDesignation;
+  final String? salesPhone;
+  final String? salesEmail;
+  final String? title;
+  final String? description;
+  final String? specifications;
+  final String? warranty;
+  final String? notes;
+  final int? validityDays;
+  final String? quotationDate;
+  final String? validUntil;
+  final double subtotal;
+  final double gstAmount;
+  final double totalAmount;
+  final String? pdfPath;
+  final List<QuotationLine> items;
+  final List<QuotationTerm> terms;
+  final String? viewUrl;
+  final String? pdfUrl;
+  final String? downloadUrl;
+  final String? detailUrl;
+
+  CreatedQuotation({
+    this.id,
+    this.quotationNo,
+    this.userId,
+    this.visitId,
+    this.productId,
+    this.customerName,
+    this.customerAddress,
+    this.customerPhone,
+    this.customerEmail,
+    this.salesName,
+    this.salesDesignation,
+    this.salesPhone,
+    this.salesEmail,
+    this.title,
+    this.description,
+    this.specifications,
+    this.warranty,
+    this.notes,
+    this.validityDays,
+    this.quotationDate,
+    this.validUntil,
+    this.subtotal = 0,
+    this.gstAmount = 0,
+    this.totalAmount = 0,
+    this.pdfPath,
+    this.items = const [],
+    this.terms = const [],
+    this.viewUrl,
+    this.pdfUrl,
+    this.downloadUrl,
+    this.detailUrl,
+  });
+
+  factory CreatedQuotation.fromJson(Map<String, dynamic> json) {
+    return CreatedQuotation(
+      id: _toInt(json['id']),
+      quotationNo: _toStr(json['quotation_no']),
+      userId: _toInt(json['user_id']),
+      visitId: _toInt(json['visit_id']),
+      productId: _toInt(json['product_id']),
+      customerName: _toStr(json['customer_name']),
+      customerAddress: _toStr(json['customer_address']),
+      customerPhone: _toStr(json['customer_phone']),
+      customerEmail: _toStr(json['customer_email']),
+      salesName: _toStr(json['sales_name']),
+      salesDesignation: _toStr(json['sales_designation']),
+      salesPhone: _toStr(json['sales_phone']),
+      salesEmail: _toStr(json['sales_email']),
+      title: _toStr(json['title']),
+      description: _toStr(json['description']),
+      specifications: _toStr(json['specifications']),
+      warranty: _toStr(json['warranty']),
+      notes: _toStr(json['notes']),
+      validityDays: _toInt(json['validity_days']),
+      quotationDate: _toStr(json['quotation_date']),
+      validUntil: _toStr(json['valid_until']),
+      subtotal: _toDouble(json['subtotal']),
+      gstAmount: _toDouble(json['gst_amount']),
+      totalAmount: _toDouble(json['total_amount']),
+      pdfPath: _toStr(json['pdf_path']),
+      items: _asMapList(json['items']).map(QuotationLine.fromJson).toList(),
+      terms: _asMapList(json['terms']).map(QuotationTerm.fromJson).toList(),
+      viewUrl: _toStr(json['view_url']),
+      pdfUrl: _toStr(json['pdf_url']),
+      downloadUrl: _toStr(json['download_url']),
+      detailUrl: _toStr(json['detail_url']),
+    );
+  }
+
+  /// Best URL for opening the PDF inline.
+  String? get openUrl => viewUrl ?? pdfUrl ?? downloadUrl;
+}
+
+/// One priced row on a created quotation — the product itself, a probe, or an
+/// option, distinguished by [sourceType].
+class QuotationLine {
+  final int? id;
+  final int? quotationId;
+  final String? sourceType;
+  final int? sourceId;
+  final String? name;
+  final String? modelCode;
+  final String? cisCode;
+  final String? description;
+  final int quantity;
+  final double unitBasePrice;
+  final double unitGstPercentage;
+  final double unitGstAmount;
+  final double unitTotalPrice;
+  final double lineSubtotal;
+  final double lineGstAmount;
+  final double lineTotalAmount;
+  final int sortOrder;
+
+  QuotationLine({
+    this.id,
+    this.quotationId,
+    this.sourceType,
+    this.sourceId,
+    this.name,
+    this.modelCode,
+    this.cisCode,
+    this.description,
+    this.quantity = 1,
+    this.unitBasePrice = 0,
+    this.unitGstPercentage = 0,
+    this.unitGstAmount = 0,
+    this.unitTotalPrice = 0,
+    this.lineSubtotal = 0,
+    this.lineGstAmount = 0,
+    this.lineTotalAmount = 0,
+    this.sortOrder = 0,
+  });
+
+  factory QuotationLine.fromJson(Map<String, dynamic> json) {
+    return QuotationLine(
+      id: _toInt(json['id']),
+      quotationId: _toInt(json['quotation_id']),
+      sourceType: _toStr(json['source_type']),
+      sourceId: _toInt(json['source_id']),
+      name: _toStr(json['name']),
+      modelCode: _toStr(json['model_code']),
+      cisCode: _toStr(json['cis_code']),
+      description: _toStr(json['description']),
+      quantity: _toInt(json['quantity']) ?? 1,
+      unitBasePrice: _toDouble(json['unit_base_price']),
+      unitGstPercentage: _toDouble(json['unit_gst_percentage']),
+      unitGstAmount: _toDouble(json['unit_gst_amount']),
+      unitTotalPrice: _toDouble(json['unit_total_price']),
+      lineSubtotal: _toDouble(json['line_subtotal']),
+      lineGstAmount: _toDouble(json['line_gst_amount']),
+      lineTotalAmount: _toDouble(json['line_total_amount']),
+      sortOrder: _toInt(json['sort_order']) ?? 0,
+    );
+  }
+}
+
+/// The compact quotation record the visit list returns under `quotations[]`.
+class QuotationSummary {
+  final int? quotationId;
+  final String? quotationNo;
+  final int? productId;
+  final String? quotationDate;
+  final String? validUntil;
+  final double totalAmount;
+  final String? viewUrl;
+  final String? pdfUrl;
+  final String? downloadUrl;
+  final String? detailUrl;
+
+  QuotationSummary({
+    this.quotationId,
+    this.quotationNo,
+    this.productId,
+    this.quotationDate,
+    this.validUntil,
+    this.totalAmount = 0,
+    this.viewUrl,
+    this.pdfUrl,
+    this.downloadUrl,
+    this.detailUrl,
+  });
+
+  factory QuotationSummary.fromJson(Map<String, dynamic> json) {
+    return QuotationSummary(
+      quotationId: _toInt(json['quotation_id']),
+      quotationNo: _toStr(json['quotation_no']),
+      productId: _toInt(json['product_id']),
+      quotationDate: _toStr(json['quotation_date']),
+      validUntil: _toStr(json['valid_until']),
+      totalAmount: _toDouble(json['total_amount']),
+      viewUrl: _toStr(json['view_url']),
+      pdfUrl: _toStr(json['pdf_url']),
+      downloadUrl: _toStr(json['download_url']),
+      detailUrl: _toStr(json['detail_url']),
+    );
+  }
+
+  static List<QuotationSummary> listFrom(dynamic value) =>
+      _asMapList(value).map(QuotationSummary.fromJson).toList();
+
+  String? get openUrl => viewUrl ?? pdfUrl ?? downloadUrl;
+}
+
 /// A probe/option picked by the user, with its quantity.
 class SelectedQuotationItem {
   final QuotationItem item;

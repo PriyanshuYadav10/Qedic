@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:qedic/visit/UpdateVisit.dart';
 import '../apis/app_exception.dart';
 import '../quotation/GenerateQuotation.dart';
@@ -435,6 +436,139 @@ class _VisitListState extends State<VisitList> {
   bool _isTappable(VisitListData item) =>
       item.status == "Pending" || item.isEditable == "0";
 
+  Future<void> _openGenerateQuotation(VisitListData item) async {
+    final created = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => GenerateQuotation(visitListData: item),
+      ),
+    );
+    // Reload rather than patching the item locally: the list payload already
+    // carries `quotations[]`, so a refresh is what makes View/Download stick
+    // across restarts.
+    if (created == true && mounted) {
+      getVisitListAPI(visitOppt ? 'oppo' : 'visit');
+    }
+  }
+
+  Future<void> _openQuotationUrl(String? url) async {
+    if (url == null || url.isEmpty) {
+      Commons.flushbar_Messege(context, 'No document link for this quotation');
+      return;
+    }
+    try {
+      final launched = await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) {
+        Commons.flushbar_Messege(context, 'Could not open the quotation PDF');
+      }
+    } catch (_) {
+      if (mounted) {
+        Commons.flushbar_Messege(context, 'Could not open the quotation PDF');
+      }
+    }
+  }
+
+  /// Replaces the Generate Quotation button once the visit has a quotation.
+  Widget _quotationActions(VisitListData item) {
+    final quotation = item.latestQuotation;
+    if (quotation == null) return const SizedBox.shrink();
+    final extra = item.quotations.length - 1;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: HexColor(HexColor.primary_s).withOpacity(0.08),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.description_rounded,
+                  size: 14, color: HexColor(HexColor.primary_s)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  quotation.quotationNo ?? 'Quotation',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontFamily: 'montserrat_medium',
+                    color: HexColor(HexColor.primary_s),
+                  ),
+                ),
+              ),
+              if (extra > 0)
+                Text(
+                  '+$extra more',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontFamily: 'montserrat_regular',
+                    color: HexColor(HexColor.gray_text),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: HexColor(HexColor.primary_s),
+                  side: BorderSide(color: HexColor(HexColor.primary_s)),
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => _openQuotationUrl(quotation.openUrl),
+                icon: const Icon(Icons.visibility_outlined, size: 16),
+                label: const Text(
+                  'View',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'montserrat_medium',
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: HexColor(HexColor.primary_s),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onPressed: () => _openQuotationUrl(
+                  quotation.downloadUrl ?? quotation.pdfUrl,
+                ),
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: const Text(
+                  'Download',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontFamily: 'montserrat_medium',
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _buildOpportunityCard(VisitListData item) {
     final accent = _opptyAccent(item.opptyType?.toString());
     final isPending = item.status == "Pending";
@@ -666,39 +800,34 @@ class _VisitListState extends State<VisitList> {
                   ],
                   if (showQuote) ...[
                     const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: HexColor(HexColor.primary_s),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 11),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  GenerateQuotation(visitListData: item),
+                    if (item.hasQuotation)
+                      _quotationActions(item)
+                    else
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: HexColor(HexColor.primary_s),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 11),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.description_outlined,
-                            size: 16),
-                        label: const Text(
-                          'Generate Quotation',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'montserrat_medium',
+                          ),
+                          onPressed: () => _openGenerateQuotation(item),
+                          icon: const Icon(Icons.description_outlined,
+                              size: 16),
+                          label: const Text(
+                            'Generate Quotation',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontFamily: 'montserrat_medium',
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ],
               ),
