@@ -362,35 +362,44 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
   }
 
   Future<bool?> _confirmSubmit() {
+    final termCount = _terms.where((t) => t.included).length;
     return showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Submit Quotation?'),
-        content: Column(
+      builder: (ctx) => _QuotationDialog(
+        icon: Icons.fact_check_outlined,
+        accent: HexColor(HexColor.primary_s),
+        title: 'Submit Quotation?',
+        subtitle:
+            'It goes to your Manager and then Super Admin for approval.',
+        body: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _summaryRow('Customer', _customerName.text.trim()),
-            _summaryRow('Product', _product?.name ?? '-'),
-            _summaryRow('Probes', '${_selectedProbes.length}'),
-            _summaryRow('Options', '${_selectedOptions.length}'),
-            _summaryRow('Terms', '${_terms.where((t) => t.included).length}'),
-            const Divider(height: 20),
-            _summaryRow('Total', _currency.format(_grandTotal), bold: true),
+            _dialogCard([
+              _summaryRow('Customer', _customerName.text.trim()),
+              _summaryRow('Product', _product?.name ?? '-'),
+              _summaryRow('Probes', '${_selectedProbes.length}'),
+              _summaryRow('Options', '${_selectedOptions.length}'),
+              _summaryRow('Terms', '$termCount'),
+            ]),
+            const SizedBox(height: 12),
+            _totalStrip('Estimated Total', _grandTotal),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: HexColor(HexColor.primary_s),
-              foregroundColor: Colors.white,
+          Expanded(
+            child: _dialogButton(
+              label: 'Cancel',
+              onPressed: () => Navigator.of(ctx).pop(false),
             ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Submit'),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _dialogButton(
+              label: 'Submit',
+              primary: true,
+              onPressed: () => Navigator.of(ctx).pop(true),
+            ),
           ),
         ],
       ),
@@ -401,62 +410,58 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Quotation Generated'),
-        content: Column(
+      builder: (ctx) => _QuotationDialog(
+        icon: Icons.check_circle_rounded,
+        accent: HexColor(HexColor.green_txt),
+        title: 'Quotation Generated',
+        subtitle: 'Open the PDF now, or find it later on the opportunity.',
+        body: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (created.quotationNo != null)
-              _summaryRow('Quotation No', created.quotationNo!),
-            if (created.validUntil != null)
-              _summaryRow('Valid Until', _dateOnly(created.validUntil!)),
-            _summaryRow(
-              'Total',
-              _currency.format(created.totalAmount),
-              bold: true,
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openUrl(created.openUrl),
-                    icon: const Icon(Icons.visibility_outlined, size: 18),
-                    label: const Text('View'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: HexColor(HexColor.primary_s),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () =>
-                        _openUrl(created.downloadUrl ?? created.pdfUrl),
-                    icon: const Icon(Icons.download_rounded, size: 18),
-                    label: const Text('Download'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: HexColor(HexColor.primary_s),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            _dialogCard([
+              if (created.quotationNo != null)
+                _summaryRow('Quotation No', created.quotationNo!),
+              if (created.quotationDate != null)
+                _summaryRow('Date', _dateOnly(created.quotationDate!)),
+              if (created.validUntil != null)
+                _summaryRow('Valid Until', _dateOnly(created.validUntil!)),
+            ]),
+            const SizedBox(height: 12),
+            _totalStrip('Total', created.totalAmount),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('Done'),
+          Expanded(
+            child: _dialogButton(
+              label: 'View',
+              icon: Icons.visibility_outlined,
+              onPressed: () => _openUrl(created.openUrl),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _dialogButton(
+              label: 'Download',
+              icon: Icons.download_rounded,
+              primary: true,
+              onPressed: () => _openUrl(created.downloadUrl ?? created.pdfUrl),
+            ),
           ),
         ],
+        footer: TextButton(
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            Navigator.of(context).pop(true);
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: HexColor(HexColor.gray_text),
+          ),
+          child: const Text(
+            'Done',
+            style: TextStyle(fontSize: 13, fontFamily: 'montserrat_medium'),
+          ),
+        ),
       ),
     );
   }
@@ -1093,46 +1098,43 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     final titleDraft = TextEditingController(text: term.title.text);
     final contentDraft = TextEditingController(text: term.content.text);
 
+    final isNew = term.title.text.trim().isEmpty &&
+        term.content.text.trim().isEmpty;
+
     final saved = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Term'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleDraft,
-                  decoration: const InputDecoration(labelText: 'Title'),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: contentDraft,
-                  maxLines: 10,
-                  minLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'Content',
-                    alignLabelWithHint: true,
-                  ),
-                ),
-              ],
+      builder: (ctx) => _QuotationDialog(
+        icon: Icons.edit_note_rounded,
+        accent: HexColor(HexColor.primary_s),
+        title: isNew ? 'Add Term' : 'Edit Term',
+        subtitle: 'Plain text. Formatting is applied when the PDF is built.',
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _field('Title', titleDraft, fillColor: HexColor(HexColor.gray_light)),
+            _field(
+              'Content',
+              contentDraft,
+              maxLines: 8,
+              minLines: 5,
+              fillColor: HexColor(HexColor.gray_light),
             ),
-          ),
+          ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: HexColor(HexColor.primary_s),
-              foregroundColor: Colors.white,
+          Expanded(
+            child: _dialogButton(
+              label: 'Cancel',
+              onPressed: () => Navigator.of(ctx).pop(false),
             ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Save'),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _dialogButton(
+              label: 'Save',
+              primary: true,
+              onPressed: () => Navigator.of(ctx).pop(true),
+            ),
           ),
         ],
       ),
@@ -1245,14 +1247,17 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     String label,
     TextEditingController controller, {
     int maxLines = 1,
+    int? minLines,
     TextInputType? keyboard,
     List<TextInputFormatter>? formatters,
+    Color? fillColor,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: controller,
         maxLines: maxLines,
+        minLines: minLines,
         keyboardType: keyboard,
         inputFormatters: formatters,
         style: const TextStyle(fontSize: 14),
@@ -1260,7 +1265,7 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
           labelText: label,
           alignLabelWithHint: maxLines > 1,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: fillColor ?? Colors.white,
           isDense: true,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -1281,28 +1286,35 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     );
   }
 
-  Widget _summaryRow(String label, String value, {bool bold = false}) {
+  /// A fixed-width label keeps long values (customer names, quotation numbers)
+  /// wrapping on the right instead of crushing the label.
+  Widget _summaryRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              color: HexColor(HexColor.gray_text),
-              fontFamily: 'montserrat_regular',
+          SizedBox(
+            width: 92,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.3,
+                color: HexColor(HexColor.gray_text),
+                fontFamily: 'montserrat_regular',
+              ),
             ),
           ),
-          const Spacer(),
-          Flexible(
+          const SizedBox(width: 10),
+          Expanded(
             child: Text(
-              value,
+              value.trim().isEmpty ? '-' : value,
               textAlign: TextAlign.right,
-              style: TextStyle(
-                fontSize: 13,
-                fontFamily:
-                    bold ? 'montserrat_bold' : 'montserrat_medium',
+              style: const TextStyle(
+                fontSize: 12.5,
+                height: 1.3,
+                fontFamily: 'montserrat_medium',
               ),
             ),
           ),
@@ -1310,6 +1322,213 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
       ),
     );
   }
+
+  Widget _dialogCard(List<Widget> rows) {
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: HexColor(HexColor.gray_activity_background),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: HexColor(HexColor.gray_light)),
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
+
+  Widget _totalStrip(String label, double amount) {
+    final accent = HexColor(HexColor.primary_s);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: accent.withOpacity(0.10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: HexColor(HexColor.gray_text),
+              fontFamily: 'montserrat_medium',
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              _currency.format(amount),
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 17,
+                color: accent,
+                fontFamily: 'montserrat_bold',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shared shell for this screen's dialogs: icon header, scrollable body, and a
+/// button row that never gets pushed off-screen by the keyboard.
+class _QuotationDialog extends StatelessWidget {
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String? subtitle;
+  final Widget body;
+  final List<Widget> actions;
+  final Widget? footer;
+
+  const _QuotationDialog({
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.body,
+    required this.actions,
+    this.subtitle,
+    this.footer,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+      backgroundColor: Colors.white,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 420,
+          // Subtracting the keyboard inset is what stops a focused text field
+          // from pushing the action row past the bottom of the screen.
+          maxHeight: media.size.height - media.viewInsets.bottom - 96,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: accent.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, size: 21, color: accent),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: HexColor(HexColor.black),
+                            fontFamily: 'montserrat_bold',
+                          ),
+                        ),
+                        if (subtitle != null) ...[
+                          const SizedBox(height: 3),
+                          Text(
+                            subtitle!,
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              height: 1.35,
+                              color: HexColor(HexColor.gray_text),
+                              fontFamily: 'montserrat_regular',
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 2),
+                child: body,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 16, 20, footer == null ? 20 : 6),
+              child: Row(children: actions),
+            ),
+            if (footer != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                child: Center(child: footer),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget _dialogButton({
+  required String label,
+  required VoidCallback onPressed,
+  IconData? icon,
+  bool primary = false,
+}) {
+  final accent = HexColor(HexColor.primary_s);
+  final shape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  );
+  const padding = EdgeInsets.symmetric(vertical: 13);
+  final text = Text(
+    label,
+    style: const TextStyle(fontSize: 13, fontFamily: 'montserrat_medium'),
+  );
+
+  if (primary) {
+    final style = ElevatedButton.styleFrom(
+      backgroundColor: accent,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      padding: padding,
+      shape: shape,
+    );
+    return icon == null
+        ? ElevatedButton(style: style, onPressed: onPressed, child: text)
+        : ElevatedButton.icon(
+            style: style,
+            onPressed: onPressed,
+            icon: Icon(icon, size: 17),
+            label: text,
+          );
+  }
+
+  final style = OutlinedButton.styleFrom(
+    foregroundColor: accent,
+    side: BorderSide(color: accent),
+    padding: padding,
+    shape: shape,
+  );
+  return icon == null
+      ? OutlinedButton(style: style, onPressed: onPressed, child: text)
+      : OutlinedButton.icon(
+          style: style,
+          onPressed: onPressed,
+          icon: Icon(icon, size: 17),
+          label: text,
+        );
 }
 
 /// The API stores rich text, but the app edits plain text — strip tags coming
