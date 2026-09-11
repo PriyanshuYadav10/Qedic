@@ -941,7 +941,7 @@ class _AddExpensesState extends State<AddExpenses> {
     if (newstartDate == "Select Date") {
       Commons.flushbar_Messege(_context, "Select Date");
       isvalide = false;
-    } else if (travel_purpose == "Select Purpose") {
+    } else if (travel_purpose.text.trim().isEmpty) {
       Commons.flushbar_Messege(_context, "Select Purpose of Travel");
       isvalide = false;
     }
@@ -1323,7 +1323,7 @@ class _AddExpensesState extends State<AddExpenses> {
       request.fields["select_date"] = newstartDateymd;
       request.fields["visit_id"] = visit_id_selected;
       request.fields["travel_purpose"] = travel_purpose.text;
-      if (Traveltype.toLowerCase() == "Yes") {
+      if (Traveltype.toLowerCase() == "yes") {
         request.fields["from_location"] = "";
         request.fields["to_location"] = "";
         request.fields["mileage_km"] = "";

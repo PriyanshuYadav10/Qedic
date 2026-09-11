@@ -100,7 +100,7 @@ class ExpensesListModel {
     otherExpReceipt = json['other_exp_receipt'];
     accountStatus = json['account_status'];
     status = json['status'];
-    isEditable = json['isEditable'];
+    isEditable = json['is_editable'] ?? json['isEditable'];
     adminComment = json['admin_comment'];
     travelWithMd = json['travel_with_md'];
     routeType = json['route_type'];
@@ -128,7 +128,7 @@ class ExpensesListModel {
     data['other_exp_receipt'] = this.otherExpReceipt;
     data['account_status'] = this.accountStatus;
     data['status'] = this.status;
-    data['isEditable'] = this.isEditable;
+    data['is_editable'] = this.isEditable;
     data['admin_comment'] = this.adminComment;
     data['travel_with_md'] = this.travelWithMd;
     data['route_type'] = this.routeType;

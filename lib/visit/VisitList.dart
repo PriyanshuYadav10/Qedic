@@ -471,7 +471,9 @@ class _VisitListState extends State<VisitList> {
     }
   }
 
-  /// Replaces the Generate Quotation button once the visit has a quotation.
+  /// Replaces the Generate Quotation button once the visit has a quotation:
+  /// the existing quotation number, a Regenerate action that reopens the
+  /// wizard for a fresh revision, and a Download for the current PDF.
   Widget _quotationActions(VisitListData item) {
     final quotation = item.latestQuotation;
     if (quotation == null) return const SizedBox.shrink();
@@ -518,34 +520,44 @@ class _VisitListState extends State<VisitList> {
         Row(
           children: [
             Expanded(
+              flex: 3,
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: HexColor(HexColor.primary_s),
                   side: BorderSide(color: HexColor(HexColor.primary_s)),
-                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 11),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () => _openQuotationUrl(quotation.openUrl),
-                icon: const Icon(Icons.visibility_outlined, size: 16),
-                label: const Text(
-                  'View',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontFamily: 'montserrat_medium',
+                onPressed: () => _openGenerateQuotation(item),
+                icon: const Icon(Icons.autorenew_rounded, size: 16),
+                // Longer than the half-card it sits in on small phones, so
+                // scale it down rather than let it ellipsize to nonsense.
+                label: const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Regenerate Quotation',
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'montserrat_medium',
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
+              flex: 2,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: HexColor(HexColor.primary_s),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 11),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

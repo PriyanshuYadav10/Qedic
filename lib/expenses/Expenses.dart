@@ -611,13 +611,15 @@ class _ExpensesState extends State<Expenses> {
         ExpensesListModel expensesListModel =
             ExpensesListModel.fromJson(jsonDecode(response));
 
-      print("sarjeet ${expensesListModel.data!.length}");
         if (expensesListModel.status == 1) {
           setState(() {
             expenses_list = expensesListModel.data ?? <Data_Expenses>[];
           });
         } else {
-          Commons.flushbar_Messege(context, expensesListModel.message!);
+          // "Expenses not found.." comes back as status 0 with no `data` at
+          // all. That is an empty list, not an error - let _dataNotFound()
+          // handle it instead of dereferencing a null `data`/`message`.
+          setState(() => expenses_list = <Data_Expenses>[]);
         }
       }
     } on SocketException {
