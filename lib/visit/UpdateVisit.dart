@@ -110,6 +110,11 @@ class _UpdateVisitState extends State<UpdateVisit> {
   TextEditingController winlossDateCtrl = TextEditingController();
   bool product_namevalidate = false;
 
+  /// Product Pitched is mandatory on an opportunity; this drives the red border
+  /// and hint once the field has been flagged and is still blank.
+  bool get _productPitchedMissing =>
+      product_namevalidate && product_nameController.text.trim().isEmpty;
+
   // TextEditingController oppty_typeController = TextEditingController();
 
   AllListingData? listing_Data;
@@ -355,6 +360,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
                                 } else {
                                   isCheck = false;
                                   product_nameController.clear();
+                                  product_namevalidate = false;
                                   qualityController.clear();
                                   valueController.clear();
                                   oppty_type.clear();
@@ -1439,6 +1445,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
                             if (widget.visitListData.isOpportunity != '1') {
                               isCheck = newValue!;
                               product_nameController.clear();
+                              product_namevalidate = false;
                               qualityController.clear();
                               valueController.clear();
                               oppty_type.clear();
@@ -1471,13 +1478,23 @@ class _UpdateVisitState extends State<UpdateVisit> {
                           Container(
                             margin: const EdgeInsets.only(left: 25, top: 15.0),
                             alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "Product Pitched",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: HexColor(HexColor.primarycolor),
-                                fontFamily: 'lato_bold',
-                                decoration: TextDecoration.none,
+                            child: RichText(
+                              text: TextSpan(
+                                text: "Product Pitched",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: HexColor(HexColor.primarycolor),
+                                  fontFamily: 'lato_bold',
+                                  decoration: TextDecoration.none,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: " *",
+                                    style: TextStyle(
+                                      color: HexColor(HexColor.red_color),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -1494,6 +1511,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
                                     context, (selectedData) {
                                   setState(() {
                                     product_nameController.text = selectedData;
+                                    product_namevalidate = false;
                                     print(selectedData);
                                   });
                                 });
@@ -1506,7 +1524,9 @@ class _UpdateVisitState extends State<UpdateVisit> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
-                                    color: HexColor(HexColor.gray_text),
+                                    color: _productPitchedMissing
+                                        ? HexColor(HexColor.red_color)
+                                        : HexColor(HexColor.gray_text),
                                   )),
                               child: Row(
                                 mainAxisAlignment:
@@ -1532,6 +1552,21 @@ class _UpdateVisitState extends State<UpdateVisit> {
                               ),
                             ),
                           ),
+                          if (_productPitchedMissing)
+                            Container(
+                              margin: const EdgeInsets.only(
+                                  left: 20, right: 20, top: 5),
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                "Please select a product",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: HexColor(HexColor.red_color),
+                                  fontFamily: 'montserrat_regular',
+                                  decoration: TextDecoration.none,
+                                ),
+                              ),
+                            ),
                           Container(
                             margin: const EdgeInsets.only(left: 25, top: 15.0),
                             alignment: Alignment.bottomLeft,
@@ -2614,7 +2649,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
       });
     }
     if (isvalide && isCheck == true) {
-      if (product_nameController.text.isEmpty) {
+      if (product_nameController.text.trim().isEmpty) {
         Commons.flushbar_Messege(context, "Please Select Product");
         isvalide = false;
         setState(() {
@@ -2969,6 +3004,30 @@ class _UpdateVisitState extends State<UpdateVisit> {
     }
   }
 
+  /// The saved Product Pitched may no longer be on the user's list — renamed,
+  /// deactivated, or captured before the list existed. Keeping a stale name
+  /// would resubmit a product the dropdown can't even offer, so drop it and
+  /// flag the field so the user re-picks. A name that differs only in case or
+  /// spacing is kept, normalised to the list's own spelling.
+  void _syncProductPitched() {
+    final saved = product_nameController.text.trim();
+    if (saved.isEmpty) return;
+
+    final pitched = listing_Data?.productPithed ?? const <String>[];
+    final match = pitched.firstWhere(
+      (e) => e.trim().toLowerCase() == saved.toLowerCase(),
+      orElse: () => '',
+    );
+
+    if (match.isEmpty) {
+      product_nameController.clear();
+      product_namevalidate = true;
+    } else {
+      product_nameController.text = match;
+      product_namevalidate = false;
+    }
+  }
+
   allListing() async {
     LoginModel loginModel = await Commons.getuser_info();
 
@@ -2988,6 +3047,7 @@ class _UpdateVisitState extends State<UpdateVisit> {
         if (listingData.status == 1) {
           setState(() {
             listing_Data = listingData.data ?? AllListingData();
+            _syncProductPitched();
             for (var company in listing_Data?.machineComapny??[]) {
               print('machine ${company.id.toString()}');
               print('machine ${widget.visitListData.existingMachineCompany.toString()}');

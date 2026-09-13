@@ -82,6 +82,19 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
   QuotationProduct? _product;
   int? _userId;
 
+  /// Pitched-product names offered when the visit's own machine name has no
+  /// quotation product behind it. Non-empty means the picker is on screen.
+  List<String> _productOptions = const [];
+
+  /// Why the picker is showing — the server's own "Active product not found."
+  /// rather than a generic line, so the user knows what went wrong.
+  String? _productPrompt;
+
+  /// The product the user picked in the fallback picker. Once set it wins over
+  /// the visit's `product_name` on every reload.
+  String? _pickedProductName;
+  final _productPick = TextEditingController();
+
   /// The visit/opportunity row this quotation is raised against. It arrives as
   /// a dynamic from the list model, so parse rather than cast.
   int? get _visitId => int.tryParse('${widget.visitListData.id ?? ''}');
@@ -137,6 +150,7 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
       _warranty,
       _notes,
       _validityDays,
+      _productPick,
     ]) {
       c.dispose();
     }
@@ -164,27 +178,84 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
     setState(() {
       _loading = true;
       _loadError = null;
+      _productOptions = const [];
     });
 
     try {
       await _loadSalesContact();
-      final productName = '${widget.visitListData.productName ?? ''}'.trim();
+      final productName =
+          _pickedProductName ?? '${widget.visitListData.productName ?? ''}'.trim();
       if (productName.isEmpty) {
-        throw QuotationApiException(
+        await _offerProductChoice(
           'This opportunity has no product linked to it.',
         );
+        return;
       }
       final response = await _api.getQuotationProduct(productName);
       if (!mounted) return;
       _applyProduct(response);
       setState(() => _loading = false);
+    } on QuotationApiException catch (e) {
+      if (!mounted) return;
+      // The visit's machine name isn't a quotable product (404). Let the user
+      // pick one from their pitched list instead of dead-ending on an error.
+      if (e.isProductNotFound) {
+        await _offerProductChoice(e.message);
+        return;
+      }
+      setState(() {
+        _loading = false;
+        _loadError = e.message;
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = e is QuotationApiException ? e.message : '$e';
+        _loadError = '$e';
       });
     }
+  }
+
+  /// Falls back to GET list-option/{userId} and puts its `product_pithed`
+  /// names behind a dropdown. If that list can't be fetched or comes back
+  /// empty there's nothing to choose from, so [reason] is shown as the error.
+  Future<void> _offerProductChoice(String reason) async {
+    List<String> options = const [];
+    final userId = _userId;
+    if (userId != null) {
+      try {
+        options = await _api.getPitchedProducts(userId);
+      } catch (_) {
+        // Leave options empty — the error screen below covers it.
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _productOptions = options;
+      _productPrompt = reason;
+      _loadError = options.isEmpty ? reason : null;
+      _productPick.text = _pickedProductName ?? '';
+    });
+  }
+
+  void _pickProduct() {
+    FocusScope.of(context).unfocus();
+    Commons.commonBottomSheet(
+      'Select Product',
+      _productOptions,
+      _productPick,
+      context,
+      (selectedData) {
+        final name = '$selectedData'.trim();
+        if (name.isEmpty) return;
+        setState(() {
+          _productPick.text = name;
+          _pickedProductName = name;
+        });
+        _loadEverything();
+      },
+    );
   }
 
   Future<void> _loadSalesContact() async {
@@ -517,7 +588,9 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
           ? const Center(child: CircularProgressIndicator())
           : _loadError != null
               ? _buildError()
-              : Column(
+              : _productOptions.isNotEmpty
+                  ? _buildProductPicker()
+                  : Column(
                   children: [
                     _buildHeader(),
                     _buildStepIndicator(),
@@ -557,6 +630,80 @@ class _GenerateQuotationState extends State<GenerateQuotation> {
               onPressed: _loadEverything,
               icon: const Icon(Icons.refresh_rounded, size: 18),
               label: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Shown in place of the error screen when the visit's machine name has no
+  /// quotation product: the user picks from their pitched products and the
+  /// normal flow resumes against the chosen one.
+  Widget _buildProductPicker() {
+    final picked = _productPick.text.trim();
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.inventory_2_outlined,
+                size: 42, color: HexColor(HexColor.primary_s)),
+            const SizedBox(height: 12),
+            Text(
+              _productPrompt ?? 'Product not available',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: HexColor(HexColor.gray_text),
+                fontFamily: 'montserrat_regular',
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Select a product to continue.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: HexColor(HexColor.black),
+                fontFamily: 'montserrat_medium',
+              ),
+            ),
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: _pickProduct,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: HexColor(HexColor.gray_text)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        picked.isEmpty ? 'Select Product' : picked,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: picked.isEmpty
+                              ? HexColor(HexColor.gray_text)
+                              : HexColor(HexColor.black),
+                          fontFamily: 'montserrat_regular',
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down_rounded,
+                      size: 30,
+                      color: HexColor(HexColor.gray_text),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

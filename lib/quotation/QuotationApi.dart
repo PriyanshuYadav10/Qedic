@@ -10,7 +10,17 @@ class QuotationApiException implements Exception {
   /// Trimmed to something a flushbar can actually render — see [_shortMessage].
   final String message;
 
-  QuotationApiException(String message) : message = _shortMessage(message);
+  /// HTTP status the server answered with, when the failure came from the wire
+  /// rather than from parsing. Lets callers tell "no such product" (404) apart
+  /// from a genuine outage.
+  final int? statusCode;
+
+  QuotationApiException(String message, {this.statusCode})
+      : message = _shortMessage(message);
+
+  /// The visit's machine name has no active quotation product behind it, so the
+  /// user has to pick a different one.
+  bool get isProductNotFound => statusCode == 404;
 
   @override
   String toString() => message;
@@ -100,6 +110,23 @@ class QuotationApi {
     return CreatedQuotation.fromJson(data);
   }
 
+  /// GET list-option/{userId}
+  ///
+  /// Returns the `product_pithed` names — the same list the Add Visit screen
+  /// offers under "Product Pitched". Used as the fallback picker when the
+  /// visit's own machine name has no quotation product behind it.
+  Future<List<String>> getPitchedProducts(int userId) async {
+    final json = await _get('${Commons.allListing}/$userId');
+    final data = json['data'];
+    if (data is! Map<String, dynamic>) return const [];
+    final products = data['product_pithed'];
+    if (products is! List) return const [];
+    return products
+        .map((e) => '$e'.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
   Future<Map<String, dynamic>> _get(String url) async {
     _log('GET url', url);
     final response = await http.get(
@@ -158,15 +185,24 @@ class QuotationApi {
         );
       }
       if (statusCode >= 200 && statusCode < 300 && json['status'] != 1) {
-        throw QuotationApiException('${json['message'] ?? 'Request failed'}');
+        throw QuotationApiException(
+          '${json['message'] ?? 'Request failed'}',
+          statusCode: statusCode,
+        );
       }
     }
 
     if (statusCode < 200 || statusCode >= 300) {
       if (json is Map<String, dynamic> && json['message'] != null) {
-        throw QuotationApiException('${json['message']}');
+        throw QuotationApiException(
+          '${json['message']}',
+          statusCode: statusCode,
+        );
       }
-      throw QuotationApiException('Request failed with status $statusCode');
+      throw QuotationApiException(
+        'Request failed with status $statusCode',
+        statusCode: statusCode,
+      );
     }
 
     if (json is! Map<String, dynamic>) {
